@@ -555,7 +555,8 @@ function hideform() {
 			$popup = $('<div>');
 			cnt += _addPopupPost($popup, resto);
 			if(cnt) {
-				window.setTimeout(function(){popupView.show($popup[0], e.clientX - e.offsetX + that.offsetWidth, e.clientY - e.offsetY, that);} ,10);
+				var rect = this.getBoundingClientRect();
+				window.setTimeout(function(){popupView.show($popup[0], rect.left + rect.width, rect.top + rect.height, that);} ,10);
 			}
 		});
 	}
@@ -593,7 +594,8 @@ function hideform() {
 				var $popup = $('<div>');
 				var that = this;
 				_addPopupPost($popup, no, hi);
-				window.setTimeout(function(){popupView.show($popup[0], e.clientX - e.offsetX + that.offsetWidth, e.clientY - e.offsetY, that);} ,10);
+				var rect = this.getBoundingClientRect();
+				window.setTimeout(function(){popupView.show($popup[0], rect.left + rect.width, rect.top + rect.height, that);} ,10);
 			});
 		}
 		$(thread).find('.backquote .backquote-count').mouseenter(function(e) {
@@ -601,7 +603,8 @@ function hideform() {
 			var $popup = $('<div>');
 			var that = this;
 			for(var no in quoteIndex[hi]) _addPopupPost($popup, no, hi);
-			window.setTimeout(function(){popupView.show($popup[0], e.clientX - e.offsetX + that.offsetWidth, e.clientY - e.offsetY, that);} ,10);
+			var rect = this.getBoundingClientRect();
+			window.setTimeout(function(){popupView.show($popup[0], rect.left + rect.width, rect.top + rect.height, that);} ,10);
 		});
 	}
 	
@@ -629,7 +632,8 @@ function hideform() {
 				if( $ele.hasClass('popup_id') && $ele.attr('data-id')==id ) return;
 			}
 			for( var no2 in idIndex[op][id] ) _addPopupPost($popup, no2);
-			window.setTimeout(function(){popupView.show($popup[0], e.clientX - e.offsetX + that.offsetWidth, e.clientY - e.offsetY, that);} ,10);
+			var rect = this.getBoundingClientRect();
+			window.setTimeout(function(){popupView.show($popup[0], rect.left + rect.width, rect.top + rect.height, that);} ,10);
 		});
 	}
 	
