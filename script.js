@@ -845,8 +845,12 @@ function hideform() {
 			//改為收合按鈕
 			if(after==-1) {
 				var ignore = $(threadNode[op]).find('.-expand-thread').parent();
-				ignore.html('<span class="-collapse-thread text-button">[收合]</span>');
-				$(threadNode[op]).find('.post').last().after('<span class="-collapse-thread text-button" style="margin-left: 1em;">[收合]</span>');
+				var collapseHtml = '<span class="-collapse-thread text-button">[收合]</span>';
+				ignore.html(collapseHtml);
+				if (!$.isMobile()) {
+					collapseHtml = '<span class="-collapse-thread text-button" style="margin-left: 1em;">[收合]</span>';
+				}
+				$(threadNode[op]).find('.post').last().after(collapseHtml);
 				$(threadNode[op]).find('.-collapse-thread').click(function(){
 					_collapseThread(op);
 				});
