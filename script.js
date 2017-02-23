@@ -114,7 +114,7 @@ UI.PopupView = (function() {
 		} else {
 			var margin = 10;
 			if( space.right >= space.left || space.right > 400 ) {
-				this.popup.style.left = (space.left + margin) + "px";
+				this.popup.style.left = (space.left + margin / 2) + "px";
 				this.popup.style.maxWidth = (space.right - margin * 2) + "px";
 			} else {
 				this.popup.style.right = (space.right + margin) + "px";
@@ -555,7 +555,7 @@ function hideform() {
 			$popup = $('<div>');
 			cnt += _addPopupPost($popup, resto);
 			if(cnt) {
-				window.setTimeout(function(){popupView.show($popup[0], e.clientX, e.clientY, that);} ,10);
+				window.setTimeout(function(){popupView.show($popup[0], e.clientX - e.offsetX + that.offsetWidth, e.clientY - e.offsetY, that);} ,10);
 			}
 		});
 	}
@@ -593,7 +593,7 @@ function hideform() {
 				var $popup = $('<div>');
 				var that = this;
 				_addPopupPost($popup, no, hi);
-				window.setTimeout(function(){popupView.show($popup[0], e.clientX, e.clientY, that);} ,10);
+				window.setTimeout(function(){popupView.show($popup[0], e.clientX - e.offsetX + that.offsetWidth, e.clientY - e.offsetY, that);} ,10);
 			});
 		}
 		$(thread).find('.backquote .backquote-count').mouseenter(function(e) {
@@ -601,7 +601,7 @@ function hideform() {
 			var $popup = $('<div>');
 			var that = this;
 			for(var no in quoteIndex[hi]) _addPopupPost($popup, no, hi);
-			window.setTimeout(function(){popupView.show($popup[0], e.clientX, e.clientY, that);} ,10);
+			window.setTimeout(function(){popupView.show($popup[0], e.clientX - e.offsetX + that.offsetWidth, e.clientY - e.offsetY, that);} ,10);
 		});
 	}
 	
@@ -629,7 +629,7 @@ function hideform() {
 				if( $ele.hasClass('popup_id') && $ele.attr('data-id')==id ) return;
 			}
 			for( var no2 in idIndex[op][id] ) _addPopupPost($popup, no2);
-			window.setTimeout(function(){popupView.show($popup[0], e.clientX, e.clientY, that);} ,10);
+			window.setTimeout(function(){popupView.show($popup[0], e.clientX - e.offsetX + that.offsetWidth, e.clientY - e.offsetY, that);} ,10);
 		});
 	}
 	
