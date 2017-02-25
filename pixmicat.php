@@ -41,6 +41,7 @@ PHP 5.2.0 或更高版本並開啟 GD 和 Zlib 支援，如支援 ImageMagick �
 */
 
 require './config.php'; // 引入設定檔
+//require '/home/komicolle/common/config.php';
 require ROOTPATH.'lib/pmclibrary.php'; // 引入函式庫
 require ROOTPATH.'lib/lib_errorhandler.php'; // 引入全域錯誤捕捉
 require ROOTPATH.'lib/lib_compatible.php'; // 引入相容函式庫
@@ -273,15 +274,18 @@ function arrangeThread($PTE, $tree, $tree_cut, $posts, $hiddenReply, $resno=0, $
 		$IMG_BAR = $REPLYBTN = $QUOTEBTN = $WARN_OLD = $WARN_BEKILL = $WARN_ENDREPLY = $WARN_HIDEPOST = '';
 		extract($posts[$i]); // 取出討論串文章內容設定變數
 
+		// if thread start
+		if($thdat == '') $thdat = '<div class="thread" data-no="'. $no. '">';
+
 		// 設定欄位值
 		$name = str_replace('&'._T('trip_pre'), '&amp;'._T('trip_pre'), $name); // 避免 &#xxxx; 後面被視為 Trip 留下 & 造成解析錯誤
 		if(CLEAR_SAGE) $email = preg_replace('/^sage( *)/i', '', trim($email)); // 清除E-mail中的「sage」關鍵字
 		if(ALLOW_NONAME==2){ // 強制砍名
 			$name = preg_match('/(\\'._T('trip_pre').'.{10})/', $name, $matches) ? '<span class="nor">'.$matches[1].'</span>' : '';
-			if($email) $now = "<a href=\"mailto:$email\">$now</a>";
+			//if($email) $now = "<a href=\"mailto:$email\">$now</a>";
 		}else{
 			$name = preg_replace('/(\\'._T('trip_pre').'.{10})/', '<span class="nor">$1</span>', $name); // Trip取消粗體
-			if($email) $name = "<a href=\"mailto:$email\">$name</a>";
+			//if($email) $name = "<a href=\"mailto:$email\">$name</a>";
 		}
 		if(AUTO_LINK) $com = auto_link($com);
 		$com = quoteLight($com);
@@ -306,26 +310,29 @@ function arrangeThread($PTE, $tree, $tree_cut, $posts, $hiddenReply, $resno=0, $
 			$imageURL = $FileIO->getImageURL($tim.$ext); // image URL
 			$thumbName = $FileIO->resolveThumbName($tim); // thumb Name
 
-			$imgsrc = '<a href="'.$imageURL.'" target="_blank" rel="nofollow"><img src="nothumb.gif" class="img" alt="'.$imgsize.'" title="'.$imgsize.'" /></a>'; // 預設顯示圖樣式 (無預覽圖時)
+			$imgsrc = '<a class="file-thumb" href="'.$imageURL.'" target="_blank" rel="nofollow"><img src="nothumb.gif" class="img" alt="'.$imgsize.'" title="'.$imgsize.'" /></a>'; // 預設顯示圖樣式 (無預覽圖時)
 			if($tw && $th){
 				if($thumbName != false){ // 有預覽圖
 					$thumbURL = $FileIO->getImageURL($thumbName); // thumb URL
 					$img_thumb = '<small>'._T('img_sample').'</small>';
-					$imgsrc = '<a href="'.$imageURL.'" target="_blank" rel="nofollow"><img src="'.$thumbURL.'" style="width: '.$tw.'px; height: '.$th.'px;" class="img" alt="'.$imgsize.'" title="'.$imgsize.'" /></a>';
+					$imgsrc = '<a class="file-thumb" href="'.$imageURL.'" target="_blank" rel="nofollow"><img src="'.$thumbURL.'" style="width: '.$tw.'px; height: '.$th.'px;" class="img" alt="'.$imgsize.'" title="'.$imgsize.'" /></a>';
 				}elseif($ext=='.swf') $imgsrc = ''; // swf檔案不需預覽圖
 			}
 			if(SHOW_IMGWH) $imgwh_bar = ', '.$imgw.'x'.$imgh; // 顯示附加圖檔之原檔長寬尺寸
-			$IMG_BAR = _T('img_filename').'<a href="'.$imageURL.'" target="_blank" rel="nofollow">'.$tim.$ext.'</a>-('.$imgsize.$imgwh_bar.') '.$img_thumb;
+			$IMG_BAR = _T('img_filename').'<a href="'.$imageURL.'" target="_blank" rel="nofollow">'.$tim.$ext.'</a>-('.$imgsize.$imgwh_bar.')';
 		}
 
 		// 設定回應 / 引用連結
+		$QUOTEBTN = 'No.'. $no;
+		if(!$resno && !$i) $REPLYBTN = '[<a href="'.PHP_SELF.'?res='.$no.'">'._T('reply_btn').'</a>]'; // 首篇
+		/*
 		if($resno){ // 回應模式
 			if($showquotelink) $QUOTEBTN = '<a href="javascript:quote('.$no.');" class="qlink">No.'.$no.'</a>';
 			else $QUOTEBTN = '<a href="'.PHP_SELF.'?res='.$tree.'&amp;page_num=all#r'.$no.'" class="qlink">No.'.$no.'</a>';
 		}else{
 			if(!$i)	$REPLYBTN = '[<a href="'.PHP_SELF.'?res='.$no.'">'._T('reply_btn').'</a>]'; // 首篇
 			$QUOTEBTN = '<a href="'.PHP_SELF.'?res='.$tree[0].'#q'.$no.'" class="qlink">No.'.$no.'</a>';
-		}
+		}*/
 		if($adminMode){ // 前端管理模式
 			$modFunc = '';
 			$PMS->useModuleMethods('AdminList', array(&$modFunc, $posts[$i], $resto)); // "AdminList" Hook Point
@@ -365,6 +372,7 @@ function arrangeThread($PTE, $tree, $tree_cut, $posts, $hiddenReply, $resno=0, $
 		}
 	}
 	$thdat .= $PTE->ParseBlock('THREADSEPARATE',($resno)?array('{$RESTO}'=>$resno):array());
+	$thdat .= '</div>';
 	return $thdat;
 }
 

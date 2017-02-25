@@ -1,0 +1,126 @@
+@media all{ /* 通用設定 */
+	html { background: #FFE; color: #800000; } /* 基本網頁背景樣式 */
+	body { font-size: 95%; font-family: arial,sans-serif; }
+	small { font-size: 0.8em; } /* 小字樣式(eg.[以預覽圖顯示]) */
+	hr { clear: left; } /* 分隔線樣式 */
+	img { border: 0; } /* 圖片顯示樣式 */
+	
+	/* text-button: 文字連結樣式 */
+	a:link, .qlink, .text-button { color: #00E; text-decoration: none; } /* 正常連結樣式 */
+	a:hover, .qlink:hover, .text-button:hover { color: #D00; cursor: pointer; } /* hover時連結樣式 */
+	a:visited { color: #00E; } /* 已拜訪連結樣式 */
+
+	#toplink { text-align: right; } /* 頁首連結條樣式 */
+	h1 { color: #800000; text-align: center; margin: 0 auto; } /* 網頁主標題樣式 */
+	hr.top { width: 90%; height: 1px; } /* 主標題下分隔線樣式 */
+
+	.Form_bg { background: #EA8; } /* 送出表單左方欄位之底色 */
+	.hide_btn { float: right; width: 4em; height: 1.25em; overflow: hidden; text-align: center; background: #F0E0D6; } /* 表單收縮按鈕樣式 */
+	.show { color: #00E; }
+	.hide { display: none; }
+	#postinfo { font-size: 0.8em; } /* 上傳說明樣式 */
+	form { padding: 0; margin: 0; } /* 修正表單標籤造成的排版問題 */
+
+	/* posts */
+	#contents { width: 100%; }
+	.threadpost {  } /* 討論串首篇樣式 */
+	.post { max-width: 100%; }
+	.reply { display: table; margin: 0.3em 1em 0 1em; padding: 0.2em 0.5em 0.2em 0.5em; background: #F0E0D6; } /* 討論串回應樣式 */
+	.replywrap { display: table-cell; } /* 解決 IE8+ 無法選取討論串回應內文用 */
+	.post:target { background: #F0D5B7; }  /* 討論串回應背景標亮樣式 */
+	
+	.file-text { font-size: 0.8em; margin-left: 0.5em; margin-right: 0.5em; margin-top: 0.5em; } /* post file */
+	
+	/* post head */
+	.post-head { font-size: 0.9em; width: 100%; margin-top: 0.2em; margin-right: 0.5em; line-height: 1.7em; overflow-wrap : break-word; }
+	.post-head span { margin-left: 0.3em; }
+	.post-head span:not(.qlink):not(.rlink) { cursor: pointer; } /* ID, 標題, 名稱... */
+	.name { color: #117743; font-weight: bold; word-break: break-all; } /* 文章張貼者名稱樣式 */
+	.admin_cap { color: #0000FF; } /* 管理員キャップ樣式設定 */
+	.img { float: left; margin: 1ex 2ex; } /* 討論串圖片顯示樣式 */
+	.title { color: #CC1105; font-size: 1.125em; font-weight: bold; } /* 討論串標題樣式 */
+	.nor { font-weight: normal; } /* Trip取消粗體用 */
+	.quote { margin: 0.9em 1em 1em 1.8em; display: block; word-break: break-all; } /* 討論串內文縮排樣式 */
+	.quote pre { display: block; max-height:450px; max-width:500px; overflow:auto; } /* code show */
+	.resquote { color: #789922; } /* 標註引用回文顏色 */
+	.category { font-size: 0.8em; color: gray; } /* 類別標籤顯示樣式 */
+	.backquote { font-size: 0.8em; margin-top: 1em; word-break: break-all; }
+	.backquote .qlink { display: inline-block; margin-left: 0.5em; }
+
+	.warn_txt { color: #F00000; font-weight: bold; } /* 討論串狀態警告文字(eg.文章即將被刪除) */
+	.warn_txt2 { color: #707070; } /* 討論串狀態提示文字(eg.回應幾篇被隱藏) */
+	#footer { text-align: center; clear: both; } /* 頁尾樣式 */
+	.bar_reply { background: #E04000; color: #FFF; font-weight: bold; text-align: center; } /* 回應模式樣式標題列 */
+	.bar_admin { background: #E08000; color: #FFF; font-weight: bold; text-align: center; } /* 管理模式樣式標題列 */
+	.ListRow1_bg { background: #D6D6F6; } /* 管理模式欄位背景顏色1(輪替出現) */
+	.ListRow2_bg { background: #F6F6F6; } /* 管理模式欄位背景顏色2(輪替出現) */
+	
+	/* id 顏色 by level */
+	/* .id3, .id5, .id8, .id9 { font-weight: bold; } */
+	.id3 { color: rgba(0,0,224,0.8); }
+	.id5 { color: #8A2BE2; }
+	.id8 { color: #330000; }
+	.id9 { color: #E00; }
+	
+	/* popup */
+	.popup { position: fixed; border-radius: 3px; overflow: auto; background: #F0E0D6; }
+	.popup .post { border-bottom: 0.05em solid rgba(0,0,0,0.75); display: block; }
+	.popup .img { float: none; max-width: 125px !important; max-height: 125px; }
+	.popup .file-text { display: none; }
+	.popup .warn_txt2 { display: none; }
+	
+	/* quickreply */
+	#quickreply { z-index: 20; position: fixed; background: #F0E0D6; display: none; }
+	#quickreply div { width: 100%; }
+	#quickreply .quickreply-head { height: 1.5em; font-size: 1.1em; cursor: move; font-weight: bold; text-align: center; }
+	#quickreply .quickreply-close { float: right; }
+	
+	#quickreply, .popup { box-shadow: 0 3px 10px rgba(0,0,0,0.75); border: 3px solid #666; }
+}
+
+@media screen{ /* 標準顯示(一般顯示器)模式附加規則 */
+	
+}
+
+@media handheld{ /* 手持設備(手機,PDA等)附加規則 */
+	html { max-width: 320px; margin: auto; } /* 320px為多數PDA的顯示寬度 */
+	input { max-width: 200px; }
+	textarea { max-width: 200px; height: 40px; }
+
+	.img { margin: 0.5ex 0.5ex; max-width: 125px; } /* 討論串圖片顯示樣式 */
+	.reply { clear: left; margin: 0.5ex 0 0 0; } /* 討論串回應樣式 */
+	.quote { margin: 1ex 1ex; } /* 討論串內文縮排樣式 */
+	#page_switch { clear: right; } /* 避免頁尾表格交疊 */
+}
+
+@media print{ /* 列印,預覽列印附加規則 */
+	html { background: #FFF; color: #000; } /* 網頁改成白底黑字,節省彩色列印成本 */
+	#postform_main { display: none; } /* 貼文表單在列印模式沒有用處,故不顯示以節省空間 */
+}
+
+@media only screen and (min-device-width: 480px) {
+	/* popup, code show scroll bar */
+	pre::-webkit-scrollbar, div::-webkit-scrollbar { width: 0.5em; height: 0.5em; border: 1px solid #CCC; background-color: #DDD; }
+	pre::-webkit-scrollbar-thumb, div::-webkit-scrollbar-thumb { background-color: #999; }
+}
+
+/* Android / iOS */
+@media only screen and (max-device-width: 480px) {
+	html { padding-top: 10px; } /* 頁面基本字體大小，邊界 */
+	body { font-size: 90%; margin: 0; }
+	#toplink { text-align: left; } /* 頂部連結列取消置右 */
+	#fcom { max-width: 35ex; } /* 調整表單欄位 */
+	#fupfile { display: block; }
+	input[type="text"] { max-width: 100% }
+	ul { padding-left: 2em; }
+	.img { margin: 0.5ex 0.5ex; max-width: 100%; height: auto; display: block; float: none; } /* 討論串圖片顯示樣式 */
+	/*.reply { clear: left; margin: 0.5ex 0 0 0; max-width: 100%; } */ /* 討論串回應樣式 */
+	.file-text { display: none; } /* 不顯示file text */
+	.pushpost { padding: 0.8em; }
+	#page_switch { clear: right; } /* 避免頁尾表格交疊 */
+	
+	.post { display: block; max-width: 100%; margin-left: 0.2em; margin-right: 0.2em; width: auto; }
+	.post-head { width:100%; word-wrap : break-word; overflow-wrap : break-word; }
+	.quote { margin: 5px 10px; overflow: auto; } /* 內文內縮 */
+	.quote pre { max-width: 300px; } /* code show */
+}

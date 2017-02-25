@@ -78,15 +78,16 @@ function form(&$dat, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail
 		$PMS->useModuleMethods('LinksAboveBar', array(&$links,'reply',$resno)); // "LinksAboveBar" Hook Point
 		$pte_vals['{$FORMTOP}'] = $links.'<div class="bar_reply">'._T('form_top').'</div>';
 	}
-	if(USE_FLOATFORM && !$resno && $iscollapse) $pte_vals['{$FORMTOP}'] .= "\n".'[<span id="show" class="hide" onmouseover="showform();" onclick="showform();">'._T('form_showpostform').'</span><span id="hide" class="show" onmouseover="hideform();" onclick="hideform();">'._T('form_hidepostform').'</span>]';
+	if(USE_FLOATFORM && !$resno && $iscollapse) $pte_vals['{$FORMTOP}'] .= "\n".'[<span id="show" class="hide"">'._T('form_showpostform').'</span><span id="hide" class="show"">'._T('form_hidepostform').'</span>]';
 	$pte_vals += array('{$MAX_FILE_SIZE}' => MAX_KB * 1024,
 		'{$RESTO}' => $resno ? '<input type="hidden" name="resto" value="'.$resno.'" />' : '',
 		'{$FORM_NAME_TEXT}' => _T('form_name'),
-		'{$FORM_NAME_FIELD}' => '<input class="hide" type="text" name="name" value="spammer" /><input maxlength="'.INPUT_MAX.'" type="text" name="'.FT_NAME.'" id="fname" size="28" value="'.$name.'" />',
+		'{$FORM_NAME_FIELD}' => '<input class="hide" value="DO NOT FIX THIS" type="text" name="sub" /><input class="hide" type="text" name="name" value="spammer" /><input maxlength="'.INPUT_MAX.'" type="text" name="'.FT_NAME.'" id="fname" size="28" value="'.$name.'" />',
 		'{$FORM_EMAIL_TEXT}' => _T('form_email'),
-		'{$FORM_EMAIL_FIELD}' => '<input maxlength="'.INPUT_MAX.'" type="text" name="'.FT_EMAIL.'" id="femail" size="28" value="'.$mail.'" /><input type="text" class="hide" name="email" value="foo@foo.bar" />',
+//		'{$FORM_EMAIL_FIELD}' => '<input maxlength="'.INPUT_MAX.'" type="text" name="'.FT_EMAIL.'" id="femail" size="28" value="'.$mail.'" /><input type="text" class="hide" name="email" value="foo@foo.bar" />',
+		'{$FORM_EMAIL_FIELD}' => '<input type="checkbox" name="'.FT_EMAIL.'" id="femail" value="sage" /><input type="text" class="hide" name="email" value="foo@foo.bar" />',
 		'{$FORM_TOPIC_TEXT}' => _T('form_topic'),
-		'{$FORM_TOPIC_FIELD}' => '<input class="hide" value="DO NOT FIX THIS" type="text" name="sub" /><input maxlength="'.INPUT_MAX.'"  type="text" name="'.FT_SUBJECT.'" id="fsub" size="28" value="'.$sub.'" />',
+		'{$FORM_TOPIC_FIELD}' => '<input maxlength="'.INPUT_MAX.'"  type="text" name="'.FT_SUBJECT.'" id="fsub" size="28" value="'.$sub.'" />',
 		'{$FORM_SUBMIT}' => '<input type="submit" name="sendbtn" value="'._T('form_submit_btn').'" />',
 		'{$FORM_COMMENT_TEXT}' => _T('form_comment'),
 		'{$FORM_COMMENT_FIELD}' => '<textarea maxlength="'.COMM_MAX.'" name="'.FT_COMMENT.'" id="fcom" cols="48" rows="4" style="width: 400px; height: 80px;">'.$com.'</textarea><textarea name="com" class="hide" cols="48" rows="4">EID OG SMAPS</textarea>',
@@ -108,6 +109,11 @@ function form(&$dat, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail
 			$pte_vals['{$FORM_CONTPOST_FIELD}'] = '<input type="checkbox" name="up_series" id="up_series" value="on"'.((isset($_GET["upseries"]) && $resno)?' checked="checked"':'').' />';
 			$pte_vals['{$FORM_CONTPOST_TEXT}'] = _T('form_contpost');
 		}
+	}
+	if(!$resno) { //not in reply mode
+		$pte_vals += array(
+			'{$MAIN_PAGE}' => '11'
+		);
 	}
 	if(USE_CATEGORY) {
 		$pte_vals += array('{$FORM_CATEGORY_FIELD}' => '<input type="text" name="category" size="28" value="'.$cat.'" />',
@@ -388,9 +394,16 @@ function getRemoteAddrOpenShift() {
 */
 
 function getRemoteAddrCloudFlare() {
-    $addr = $_SERVER['REMOTE_ADDR'];
-    $cloudflare_v4 = array('199.27.128.0/21', '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22', '141.101.64.0/18', '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20', '197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/12');
-    $cloudflare_v6 = array('2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32', '2405:8100::/32');
+	$addr = $_SERVER['REMOTE_ADDR'];
+	if( TRUST_HTTP_X_FORWARDED_FOR && isset($_SERVER['HTTP_X_FORWARDED_FOR']) ) $addr = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    $cloudflare_v4 = array('199.27.128.0/21', '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22', '141.101.64.0/18', '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20', '197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/12',
+    	'131.0.72.0/22',
+    	'172.64.0.0/13'
+    );
+    $cloudflare_v6 = array('2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32', '2405:8100::/32',
+    	'2c0f:f248::/32',
+    	'2a06:98c0::/29'
+    );
 
     if(filter_var($addr, FILTER_VALIDATE_IP,FILTER_FLAG_IPV4)) { //v4 address
         foreach ($cloudflare_v4 as &$cidr) {
