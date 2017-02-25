@@ -92,7 +92,7 @@ UI.PopupView = (function() {
 		} else {
 			this._remove(true);
 		}
-		
+		/*
 		//rendering
 		var windowHeight = $(window).innerHeight();
 		var space = {
@@ -114,7 +114,7 @@ UI.PopupView = (function() {
 		} else {
 			var margin = 10;
 			if( space.right >= space.left || space.right > 400 ) {
-				this.popup.style.left = (space.left + margin / 2) + "px";
+				this.popup.style.left = (space.left + margin) + "px";
 				this.popup.style.maxWidth = (space.right - margin * 2) + "px";
 			} else {
 				this.popup.style.right = (space.right + margin) + "px";
@@ -127,7 +127,7 @@ UI.PopupView = (function() {
 			this.popup.style.top = top + "px";
 			this.popup.style.maxHeight = (windowHeight - top - margin) + "px";
 		}
-
+		*/
 		if (this._first) {
 			this._first = false;
 			this._currentX = this.mouseX;
@@ -180,6 +180,19 @@ UI.PopupView = (function() {
 		};
 		this._popupStack.push(popupInfo);
 		this._popupArea.appendChild(popupInfo.popup);
+		
+		popupInfo.popper = new Popper(source, popup, {
+			placement: 'right-start',
+			modifiers: {
+				flip: {
+					behavior: 'flip'
+				},
+				preventOverflow: {
+					boundariesElement: 'viewport'
+				}
+			}
+		});
+		
 		this._activateNode();
 		/*setTimeout((function(_this) {
 			return function() {
@@ -202,6 +215,7 @@ UI.PopupView = (function() {
 			popupInfo.source.classList.remove("popup_source");
 			popupInfo.source.removeAttribute("stack-index");
 			this._popupArea.removeChild(popupInfo.popup);
+			popupInfo.popper.destroy();
 			this._popupStack.pop();
 		}
 	};
@@ -555,8 +569,7 @@ function hideform() {
 			$popup = $('<div>');
 			cnt += _addPopupPost($popup, resto);
 			if(cnt) {
-				var rect = this.getBoundingClientRect();
-				window.setTimeout(function(){popupView.show($popup[0], rect.left + rect.width, rect.top + rect.height, that);} ,10);
+				window.setTimeout(function(){popupView.show($popup[0], e.clientX, e.clientY, that);} ,10);
 			}
 		});
 	}
@@ -594,8 +607,7 @@ function hideform() {
 				var $popup = $('<div>');
 				var that = this;
 				_addPopupPost($popup, no, hi);
-				var rect = this.getBoundingClientRect();
-				window.setTimeout(function(){popupView.show($popup[0], rect.left + rect.width, rect.top + rect.height, that);} ,10);
+				window.setTimeout(function(){popupView.show($popup[0], e.clientX, e.clientY, that);} ,10);
 			});
 		}
 		$(thread).find('.backquote .backquote-count').mouseenter(function(e) {
@@ -603,8 +615,7 @@ function hideform() {
 			var $popup = $('<div>');
 			var that = this;
 			for(var no in quoteIndex[hi]) _addPopupPost($popup, no, hi);
-			var rect = this.getBoundingClientRect();
-			window.setTimeout(function(){popupView.show($popup[0], rect.left + rect.width, rect.top + rect.height, that);} ,10);
+			window.setTimeout(function(){popupView.show($popup[0], e.clientX, e.clientY, that);} ,10);
 		});
 	}
 	
@@ -632,8 +643,7 @@ function hideform() {
 				if( $ele.hasClass('popup_id') && $ele.attr('data-id')==id ) return;
 			}
 			for( var no2 in idIndex[op][id] ) _addPopupPost($popup, no2);
-			var rect = this.getBoundingClientRect();
-			window.setTimeout(function(){popupView.show($popup[0], rect.left + rect.width, rect.top + rect.height, that);} ,10);
+			window.setTimeout(function(){popupView.show($popup[0], e.clientX, e.clientY, that);} ,10);
 		});
 	}
 	
