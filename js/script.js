@@ -784,6 +784,36 @@ function hideform() {
 		}
 	}
 	
+	function expandYoutubeLink(post) {
+		var reg = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([\w\-_]+)\&?/;
+		$(post).find('.quote a').each(function(){
+			var $a = $(this);
+			var ar = reg.exec($a.attr('href'));
+			
+			if(Array.isArray(ar) &&　ar.length >= 2) {
+				var $html = $('<span> [<span class="-expand-youtube" style="cursor:pointer; color:#00E;" data-v="' + ar[1] + '">展開</span>]</span>');
+				$html.insertAfter($a);
+				var $button = $html.find('.-expand-youtube');
+
+				$button.click(function(e){
+					if( $(this).hasClass('-expanded') ) {
+						$(this).removeClass('-expanded');
+						$(this).parent().next('.-youtube-container').remove();
+						$(this).html('展開');
+					}
+					else {
+						$(this).addClass('-expanded');
+						var tmp = '<div class="-youtube-container"><iframe type="text/html" src="' +
+							'//youtube.com/embed/' + $button.attr('data-v') +
+							'" frameborder="0"/></div>';
+						$(tmp).insertAfter($(this).parent());
+						$(this).html('收起');
+					}
+				});
+			}
+		});
+	}
+	
 	function quickreplyInit(post) {
 		var no = $(post).attr('data-no');
 		var isMobile = $.isMobile();
@@ -927,6 +957,7 @@ function hideform() {
 	onPostLoadedFn.push(expandImage);
 	onPostLoadedFn.push(makeQuoteIndex);
 	onPostLoadedFn.push(makeIDIndex);
+	onPostLoadedFn.push(expandYoutubeLink);
 	onPostLoadedFn.push(quickreplyInit);
 	onPostLoadedFn.push(expandButtonInit);
 	
