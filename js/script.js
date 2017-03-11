@@ -679,12 +679,13 @@ function hideform() {
 			if( !idcnt[id] ) idcnt[id] = 0;
 			idcnt[id]++;
 			if(cnt!=1) $(this).html("ID:" + id + "(" + idcnt[id] + "/" + cnt + ")");
+			else $(this).html("ID:" + id);
+			$(this).removeClass('id3');
+			$(this).removeClass('id5');
+			$(this).removeClass('id8');
+			$(this).removeClass('id9');
 			
 			if(cnt > 1) {
-				$(this).removeClass('id3');
-				$(this).removeClass('id5');
-				$(this).removeClass('id8');
-				$(this).removeClass('id9');
 				if(cnt <= 3) $(this).addClass('id3');
 				else if(cnt <= 5) $(this).addClass('id5');
 				else if(cnt < 9) $(this).addClass('id8');
