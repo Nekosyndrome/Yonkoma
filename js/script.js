@@ -409,6 +409,7 @@ function hideform() {
 	var onPostLoadedFn = [];
 	var onThreadLoadedFn = [];
 	var onThreadUpdatedFn = [];
+	var onPostRemovedFn = [];
 	
 	//UI
 	var popupView;
@@ -569,6 +570,25 @@ function hideform() {
 			}
 		});
 	}
+
+	function deleteQuoteIndex(post) {
+		var no = parseInt( $(post).attr('data-no') );
+		var isMobile = $.isMobile();
+		quoteIndex[no] = undefined;
+		$(post).find('.quote .qlink').each(function() {
+			var reg = /r(\d+)/g;
+			var resto = reg.exec( $(this).attr('href') );
+			resto = parseInt( resto[1] );
+			
+			//回覆下面，回覆自己
+			if( resto >= no ) return;
+			console.log(resto + " " + no);
+			console.log(quoteIndex[resto]);
+			console.log( Array.isArray(quoteIndex[resto]) );
+			if( typeof quoteIndex[resto] === 'object' )
+				delete quoteIndex[resto][no];
+		});
+	}
 	
 	/*
 	 * 加 backquote list
@@ -642,6 +662,15 @@ function hideform() {
 			window.setTimeout(function(){popupView.show($popup[0], e.clientX, e.clientY, that);} ,10);
 		});
 	}
+
+	function deleteIDIndex(post) {
+		var op = parseInt( $(post).parent().attr('data-no') );
+		var no = parseInt( $(post).attr('data-no') );
+		var id = $(post).find('.id').first().attr('data-id');
+		
+		delete idIndex[op][id][no];
+		idCount[op][id]--;
+	}
 	
 	function makeIDCount(thread) {
 		var op = parseInt( $(thread).attr('data-no') );
@@ -656,6 +685,10 @@ function hideform() {
 			if(cnt!=1) $(this).html("ID:" + id + "(" + idcnt[id] + "/" + cnt + ")");
 			
 			if(cnt > 1) {
+				$(this).removeClass('id3');
+				$(this).removeClass('id5');
+				$(this).removeClass('id8');
+				$(this).removeClass('id9');
 				if(cnt <= 3) $(this).addClass('id3');
 				else if(cnt <= 5) $(this).addClass('id5');
 				else if(cnt < 9) $(this).addClass('id8');
@@ -805,7 +838,7 @@ function hideform() {
 						$(this).addClass('-expanded');
 						var tmp = '<div class="-youtube-container"><iframe type="text/html" src="' +
 							'//youtube.com/embed/' + $button.attr('data-v') +
-							'" frameborder="0"/></div>';
+							'" frameborder="0" width="640" height="360"/></div>';
 						$(tmp).insertAfter($(this).parent());
 						$(this).html('收起');
 					}
@@ -903,10 +936,12 @@ function hideform() {
 		var collapses = $(threadNode[op]).find('.-collapse-thread');
 		var rect = collapses[1].getBoundingClientRect();
 		var replies = $(threadNode[op]).find('.reply');
-		var ignoreCount = replies.length - 10;
-		// 移除上方回應，保留最後10篇回應
+		var ignoreCount = replies.length - 5;
+		// 移除上方回應，保留最後5篇回應
 		for (var i = 0; i < ignoreCount; i++) {
-			delete threadNode[$(replies[i]).attr('data-no')];
+			var no = $(replies[i]).attr('data-no');
+			onPostRemoved(no);
+			delete threadNode[no];
 			replies[i].remove();
 		}
 		//卷軸跳回原本位置
@@ -920,6 +955,8 @@ function hideform() {
 		ignore.find('.-expand-thread').click(function(){
 			_expandThread(op);
 		});
+		onThreadUpdated(op);
+		//onThreadLoaded(op);
 	}
 	
 	function expandButtonInit(post) {
@@ -935,12 +972,18 @@ function hideform() {
 	
 	/*
 	 * onPostLoaded: 加按鈕、加功能...
+	 * onPostRemoved: 刪除ID index...，刪除postNode之前執行
 	 * onThreadUpdated: 如更新ID數量, 更新...
 	 * onThreadLoaded: 如封鎖文章等
 	 */
 	function onPostLoaded(no) {
 		for(var i=0; i<onPostLoadedFn.length; i++)
 			onPostLoadedFn[i]( postNode[no] );
+	}
+
+	function onPostRemoved(no) {
+		for(var i=0; i<onPostRemovedFn.length; i++)
+			onPostRemovedFn[i]( postNode[no] );
 	}
 	
 	function onThreadLoaded(op) {
@@ -960,6 +1003,9 @@ function hideform() {
 	onPostLoadedFn.push(expandYoutubeLink);
 	onPostLoadedFn.push(quickreplyInit);
 	onPostLoadedFn.push(expandButtonInit);
+
+	onPostRemovedFn.push(deleteQuoteIndex);
+	onPostRemovedFn.push(deleteIDIndex);
 	
 	onThreadUpdatedFn.push(makeBackQuote);
 	onThreadUpdatedFn.push(makeIDCount);
