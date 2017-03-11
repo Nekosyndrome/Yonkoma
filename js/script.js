@@ -791,7 +791,7 @@ function hideform() {
 			var ar = reg.exec($a.attr('href'));
 			
 			if(Array.isArray(ar) &&　ar.length >= 2) {
-				var $html = $('<span> [<span class="-expand-youtube" style="cursor:pointer; color:#00E;" data-v="' + ar[1] + '">展開</span>]</span>');
+				var $html = $('<span> [<span class="-expand-youtube text-button" data-v="' + ar[1] + '">展開</span>]</span>');
 				$html.insertAfter($a);
 				var $button = $html.find('.-expand-youtube');
 
