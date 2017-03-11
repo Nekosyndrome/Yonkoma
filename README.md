@@ -6,14 +6,19 @@
 
 ### Bug回報/功能建議
 
-- 不熟github介面的，可以到 [CS](komicolle.dreamhosters.com/cs/) 版開串或找以前的串回覆。或者 mail 給下面的 contactors
-- 開發人員直接連絡、開 issues 或直接修改 code 
+- 不熟github介面的，可以到 [CS](http://komicolle.dreamhosters.com/cs/) 版開串或找以前的串回覆。或者 mail 給下面的 contactors
+- 開發人員也可以連絡管理員、開 issues 或直接修改 code 
 
 ### Code修改
 
 - git clone 完以後請先 checkout 到 `develop` branch
 - commit string 請參照目前有的格式
-- 做 pull request 之前請在本機端確認一次有沒有對到新的版本，審核過後我會盡量把版本 rebase 上來
+- 做 pull request 之前請在本機端確認一次有沒有對到新的版本，審核會盡量用 rebase 取代 merge
+
+## 一些資料
+
+- [API格式](https://github.com/Nekosyndrome/yonkoma/wiki/Api)
+- 資料表格式 - pending
 
 ## Contact
 
