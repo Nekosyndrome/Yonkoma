@@ -446,8 +446,8 @@ function hideform() {
 		
 		$(post).find('.-expand-line').click(function(e) {
 			e.preventDefault();
-			$(this).parent().find('.hide').each(function() {
-				this.outerHTML = this.innerHTML;
+			$(this).parent().find('.hide').each(function(){
+				$(this).replaceWith($(this).contents());
 			});
 			$(this).remove();
 		});
@@ -575,9 +575,7 @@ function hideform() {
 		var isMobile = $.isMobile();
 		quoteIndex[no] = undefined;
 		$(post).find('.quote .qlink').each(function() {
-			var reg = /r(\d+)/g;
-			var resto = reg.exec( $(this).attr('href') );
-			resto = parseInt( resto[1] );
+			var resto = parseInt( $(this).attr('data-no') );
 			
 			//回覆下面，回覆自己
 			if( resto >= no ) return;
