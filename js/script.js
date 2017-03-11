@@ -48,7 +48,6 @@ UI.PopupView = (function() {
 	PopupView.prototype._on_click = function(e) {
 		var id = -1;
 		for(var i=0; i<this._popupStack.length; i++) {
-			console.log(this._popupStack[i]);
 			var top = $(this._popupStack[i].popup).position().top;
 			var bottom = top + $(this._popupStack[i].popup).height();
 			if( top<=e.clientY && e.clientY<=bottom ) id = i;
@@ -582,9 +581,6 @@ function hideform() {
 			
 			//回覆下面，回覆自己
 			if( resto >= no ) return;
-			console.log(resto + " " + no);
-			console.log(quoteIndex[resto]);
-			console.log( Array.isArray(quoteIndex[resto]) );
 			if( typeof quoteIndex[resto] === 'object' )
 				delete quoteIndex[resto][no];
 		});
