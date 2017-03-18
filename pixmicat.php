@@ -213,10 +213,19 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 				else{
 					$pageNext = ($i==$next) ? ' rel="next"' : '';
 					if(!$adminMode && $i==0) $pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF2.'?">0</a>] ';
-					elseif($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL)) $pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
+					elseif($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL)) //$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
 					else $pte_vals['{$PAGENAV}'] .= '[<a href="'.$i.PHP_EXT.'?"'.$pageNext.'>'.$i.'</a>] ';
 				}
 			}
+			//...
+			$pte_vals['{$PAGENAV}'] .= '[<a onclick="">...</a>]';
+			//最後三頁
+			for($i = $page_end-3; $i < $page_end; $i++){
+				if($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL ))$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
+			}
+			
+			
+			
 			$pte_vals['{$PAGENAV}'] .= '</td>';
 			if($threads_count > $next * PAGE_DEF){
 				if($adminMode || (STATIC_HTML_UNTIL != -1) && ($next > STATIC_HTML_UNTIL)) $pte_vals['{$PAGENAV}'] .= '<td><form action="'.PHP_SELF.'?page_num='.$next.'" method="post">';
