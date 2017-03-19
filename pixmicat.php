@@ -219,8 +219,8 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 			}
 			//...
 			$pte_vals['{$PAGENAV}'] .= '[<a onclick="">...</a>]';
-			//最後三頁
 			
+			//最後三頁
 			for($i = $page_end-3; $i < $page_end; $i++){
 				$pageNext = ($i==$next) ? ' rel="next"' : '';
 				if($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL ))$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
