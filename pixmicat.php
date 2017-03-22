@@ -233,11 +233,12 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 					$pte_vals['{$PAGENAV}'] .= '[<a onclick="var page=prompt(\'Jump to page: (1-'.$page_end.')\', 1);if(page != null) document.location=\''.PHP_SELF.'?page_num=\'+Math.min('.$page_end.', Math.max(0, page))+\'\'">...</a>]';
 					$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$page_end.'"'.$pageNext.'>'.$page_end.'</a>] ';
 				}elseif($page > $page_end-5 && $page <=$page_end){
-					for($i = $page_end-8;$i < $page_end+1;$i++){				
+					for($i = $page_end-8,$first_page_live = false;$i < $page_end+1;$i++){				
 						if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
 						else{
 							$pageNext = ($i==$next) ? ' rel="next"' : '';
-							if(!$adminMode && $i==0){
+							if(!$adminMode && !$first_page_live){
+								$first_page_live = true;
 								$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF2.'?">0</a>] ';
 								$pte_vals['{$PAGENAV}'] .= '[<a onclick="var page=prompt(\'Jump to page: (1-'.$page_end.')\', 1);if(page != null) document.location=\''.PHP_SELF.'?page_num=\'+Math.min('.$page_end.', Math.max(0, page))+\'\'">...</a>]';
 							} 
