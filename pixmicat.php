@@ -208,22 +208,57 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 				$pte_vals['{$PAGENAV}'] .= '<div><input type="submit" value="'._T('prev_page').'" /></div></form></td>';
 			}else $pte_vals['{$PAGENAV}'] .= '<td style="white-space: nowrap;">'._T('first_page').'</td>';
 			$pte_vals['{$PAGENAV}'] .= '<td>';
-			for($i = 0, $len = $threads_count / PAGE_DEF; $i < $len; $i++){
-				if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
-				else{
-					$pageNext = ($i==$next) ? ' rel="next"' : '';
-					if(!$adminMode && $i==0) $pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF2.'?">0</a>] ';
-					elseif($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL)) //$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
-					else $pte_vals['{$PAGENAV}'] .= '[<a href="'.$i.PHP_EXT.'?"'.$pageNext.'>'.$i.'</a>] ';
-				}
-			}
-			//...
-			$pte_vals['{$PAGENAV}'] .= '[<a onclick="">...</a>]';
 			
-			//最後三頁
-			for($i = $page_end-3; $i < $page_end; $i++){
-				$pageNext = ($i==$next) ? ' rel="next"' : '';
-				if($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL ))$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
+			//生成頁數不等於10時,不提供E變態的頁面功能
+			if($threads_count / PAGE_DEF > STATIC_HTML_UNTIL || STATIC_HTML_UNTIL!=10){
+				for($i = 0, $len = $threads_count / PAGE_DEF; $i < $len; $i++){
+					if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
+					else{
+						$pageNext = ($i==$next) ? ' rel="next"' : '';
+						if(!$adminMode && $i==0) $pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF2.'?">0</a>] ';
+						elseif($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL ))//$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
+						else $pte_vals['{$PAGENAV}'] .= '[<a href="'.$i.PHP_EXT.'?"'.$pageNext.'>'.$i.'</a>] ';
+					}
+				}			
+			}else{
+				if($page > -1 && $page < 5){
+					for($i = 0;$i < 9;$i++){
+						if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
+						else{
+							$pageNext = ($i==$next) ? ' rel="next"' : '';
+							if(!$adminMode && $i==0) $pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF2.'?">0</a>] ';
+							elseif($adminMode || (STATIC_HTML_UNTIL != -1))$pte_vals['{$PAGENAV}'] .= '[<a href="'.$i.PHP_EXT.'?"'.$pageNext.'>'.$i.'</a>] ';					
+						}					
+					}
+					$pte_vals['{$PAGENAV}'] .= '[<a onclick="var page=prompt(\'Jump to page: (1-'.$page_end.')\', 1);if(page != null) document.location=\''.PHP_SELF.'?page_num=\'+Math.min('.$page_end.', Math.max(0, page))+\'\'">...</a>]';
+					$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$page_end.'"'.$pageNext.'>'.$page_end.'</a>] ';
+				}elseif($page > $page_end-5 && $page <=$page_end){
+					for($i = $page_end-8;$i < $page_end+1;$i++){				
+						if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
+						else{
+							$pageNext = ($i==$next) ? ' rel="next"' : '';
+							if(!$adminMode && $i==0){
+								$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF2.'?">0</a>] ';
+								$pte_vals['{$PAGENAV}'] .= '[<a onclick="var page=prompt(\'Jump to page: (1-'.$page_end.')\', 1);if(page != null) document.location=\''.PHP_SELF.'?page_num=\'+Math.min('.$page_end.', Math.max(0, page))+\'\'">...</a>]';
+							} 
+							elseif($adminMode || (STATIC_HTML_UNTIL != -1))$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';					
+						}					
+					}				
+				}else{
+					for($i = 0;$i < 7;$i++){				
+						if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
+						else{
+							$pageNext = ($i==$next) ? ' rel="next"' : '';
+							if(!$adminMode && $i==0){
+								$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF2.'?">0</a>] ';
+								$pte_vals['{$PAGENAV}'] .= '[<a onclick="var page=prompt(\'Jump to page: (1-'.$page_end.')\', 1);if(page != null) document.location=\''.PHP_SELF.'?page_num=\'+Math.min('.$page_end.', Math.max(0, page))+\'\'">...</a>]';
+							} 
+							elseif($adminMode || (STATIC_HTML_UNTIL != -1))$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';					
+						}					
+					}
+					$pte_vals['{$PAGENAV}'] .= '[<a onclick="var page=prompt(\'Jump to page: (1-'.$page_end.')\', 1);if(page != null) document.location=\''.PHP_SELF.'?page_num=\'+Math.min('.$page_end.', Math.max(0, page))+\'\'">...</a>]';
+					$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$page_end.'"'.$pageNext.'>'.$page_end.'</a>] ';
+				}
 			}
 			
 			
