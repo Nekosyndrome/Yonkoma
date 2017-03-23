@@ -218,7 +218,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 					else{
 						$pageNext = ($i==$next) ? ' rel="next"' : '';
 						if(!$adminMode && $i==0) $pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF2.'?">0</a>] ';
-						elseif($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL ))//$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
+						elseif($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL ));//$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
 						else $pte_vals['{$PAGENAV}'] .= '[<a href="'.$i.PHP_EXT.'?"'.$pageNext.'>'.$i.'</a>] ';
 					}
 				}			
@@ -236,7 +236,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 					$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$len.'"'.$pageNext.'>'.$len.'</a>] ';
 				}elseif($page > $len-5 && $page <= $len){
 					// 尾頁
-					for($i = $len-9, $first_page_live = false, $len2 = len+1; $i < $len2; $i++){				
+					for($i = $len-9, $first_page_live = false, $len2 = $len+1; $i < $len2; $i++){				
 						if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
 						else{
 							$pageNext = ($i==$next) ? ' rel="next"' : '';
