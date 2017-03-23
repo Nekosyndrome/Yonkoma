@@ -211,7 +211,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 			
 			//生成頁數不等於10時,不提供E變態的頁面功能
 			//$len 取代 $page_end , $page_end在使用$page_num當網址時會等同$page
-			$len = $threads_count / PAGE_DEF;
+			$len = ceil($threads_count / PAGE_DEF) -1;
 			if($len < STATIC_HTML_UNTIL || STATIC_HTML_UNTIL!=10){
 				for($i = 0; $i < $len; $i++){
 					if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
@@ -236,7 +236,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 					$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$len.'"'.$pageNext.'>'.$len.'</a>] ';
 				}elseif($page > $len-5 && $page <= $len){
 					// 尾頁
-					for($i = $len-8, $first_page_live = false; $i < $len+1; $i++){				
+					for($i = $len-9, $first_page_live = false, $len2 = len+1; $i < $len2; $i++){				
 						if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
 						else{
 							$pageNext = ($i==$next) ? ' rel="next"' : '';
@@ -250,7 +250,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 					}				
 				}else{
 					// 中間頁
-					for($i = $page-3, $i_end = $page+4, $first_page_live = false; $i < $i_end;$i++){				
+					for($i = $page-4, $i_end = $page+4, $first_page_live = false; $i < $i_end; $i++){				
 						if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
 						else{
 							$pageNext = ($i==$next) ? ' rel="next"' : '';
@@ -265,9 +265,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 					$pte_vals['{$PAGENAV}'] .= '[<a onclick="var page=prompt(\'Jump to page: (1-'.$len.')\', 1);if(page != null) document.location=\''.PHP_SELF.'?page_num=\'+Math.min('.$len.', Math.max(0, page))+\'\'">...</a>]';
 					$pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$len.'"'.$pageNext.'>'.$len.'</a>] ';
 				}
-			}			
-			
-			
+			}
 			
 			$pte_vals['{$PAGENAV}'] .= '</td>';
 			if($threads_count > $next * PAGE_DEF){
