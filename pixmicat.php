@@ -210,7 +210,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 			$pte_vals['{$PAGENAV}'] .= '<td>';
 			
 			//生成頁數不等於10時,不提供E變態的頁面功能
-			if($threads_count / PAGE_DEF > STATIC_HTML_UNTIL || STATIC_HTML_UNTIL!=10){
+			if($threads_count / PAGE_DEF < STATIC_HTML_UNTIL || STATIC_HTML_UNTIL!=10){
 				for($i = 0, $len = $threads_count / PAGE_DEF; $i < $len; $i++){
 					if($page==$i) $pte_vals['{$PAGENAV}'] .= "[<b>".$i."</b>] ";
 					else{
