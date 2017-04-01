@@ -3,6 +3,7 @@
 class mod_ajax{
 
 	protected $MAX_POSTS = 114514;
+	protected $MAX_THREADS = 10;
 
 	function __construct(){
 		global $PMS;
@@ -90,14 +91,14 @@ class mod_ajax{
 		return $tmp;
 	}
 
-	function outputAllThreads()
+	function outputAllThreads($offset, $limit)
 	{
 		global $PIO;
 
 		$re = array(
 			'threads' => array()
 		);
-		$threads = $PIO->fetchThreadList();
+		$threads = $PIO->fetchThreadList($offset, $limit);
 		foreach($threads as $opno)
 		{
 			$plist = $PIO->fetchPostList($opno);
@@ -270,7 +271,22 @@ class mod_ajax{
 
 		if($action == 'threads')
 		{
-			$this->outputAllThreads();
+			$limit = $this->MAX_THREADS;
+			$offset = 0;
+			
+			if( isset($_GET['limit']) )
+			{
+				$param_limit = intval( $_GET['limit'] );
+				// 限制最大數量為MAX_THREADS 確保Server不會過忙				
+				if($param_limit && $param_limit < $limit) $limit = $param_limit;
+			}		
+			if( isset($_GET['offset']) )
+			{
+				$param_offset = intval( $_GET['offset'] );
+				if($param_offset) $offset = $param_offset;
+			}
+			
+			$this->outputAllThreads($offset, $limit);
 		}
 		else if($action=='posts')
 		{
