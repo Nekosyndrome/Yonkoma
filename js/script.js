@@ -526,6 +526,7 @@ function hideform() {
 		if( postNode[no]===undefined ) return 0;
 		
 		var $new = $(postNode[no]).clone(true).removeClass('reply').removeClass('threadpost');
+		$new.attr('data-thread', $(postNode[no]).closest('.thread').attr('data-no'));
 		$new.find('.file-thumb').show();
 		$new.find('div.-expanded').remove();
 		$new.find('.file-thumb img').css('height', '').css('width', '');
@@ -851,6 +852,7 @@ function hideform() {
 			var clicke = e;
 			var $quickreply = $('#quickreply');
 			var op = $(this).closest('.thread').attr('data-no');
+			if(op==undefined) op = $(this).closest('.post').attr('data-thread');
 			
 			if(isMobile) {
 				$quickreply.css('top', 0);
