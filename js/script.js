@@ -500,13 +500,25 @@ function hideform() {
 			e.preventDefault();
 			
 			var url = $(this).attr('href');
+			var type = url.split('.'); type=type[type.length-1].toLowerCase();
 			var flg = $(this).has('.-expanded').length ? true : false;
-			var tmp = '<div class="-expanded" style="margin: 0.2em; display:block;"><img class="expanded-element expanded-close" style="max-width:100%;  cursor:pointer;" src="' + url + '"></img></div>';
+			var html = '';
+
+
+			if(type=='webm') {
+				html = '<div class="-expanded" style="margin: 0.2em; display:block;">';
+				html+= '<div>[<span class="expanded-close text-button">收回</span>]</div>';
+				html+= '<video controls loop autoplay muted style="max-width:100%;" src="' + url + '"></video>';
+				html+= '</div>';
+			}
+			else {
+				html = '<div class="-expanded" style="margin: 0.2em; display:block;"><img class="expanded-element expanded-close" style="max-width:100%;  cursor:pointer;" src="' + url + '"></img></div>';
+			}
 			$(this).hide();
-			$(this).after(tmp);
+			$(this).after(html);
 			
 			$(this).next('div.-expanded').find('.expanded-close').click(function(e) {
-				$(this).parent().parent().children('.file-thumb').each(function() {
+				$(this).closest('.-expanded').parent().children('.file-thumb').each(function() {
 					if( !$(this).has('img').length ) return;
 					$(this).show();
 				});
@@ -516,7 +528,7 @@ function hideform() {
 				var h2 = h1 + $(window).innerHeight();
 				if(cur<h1 || cur>h2) $('html,body').animate({scrollTop:cur}, 0);
 				
-				$(this).parent().remove();
+				$(this).closest('.-expanded').remove();
 			});
 		});
 	}
