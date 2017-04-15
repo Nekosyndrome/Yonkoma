@@ -377,8 +377,10 @@ function hideform() {
 			if (a) {
 				ext_allowed = 0;
 				ext_length = ext.length;
+				var pos = a.lastIndexOf('.');
+				pos = pos==-1 ? 0 : pos+1;
 				for (j = 0; j < ext_length; j++) {
-					if (a.substr(a.length - 3, 3).toUpperCase() == ext[j]) {
+					if (a.substr(pos, a.length-pos).toUpperCase() == ext[j]) {
 						ext_allowed = 1;
 						break;
 					}
