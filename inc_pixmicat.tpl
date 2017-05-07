@@ -76,7 +76,7 @@ var ext="{$ALLOW_UPLOAD_EXT}".toUpperCase().split("|");
 
 </form>
 <!--&IF($FORMBOTTOM,'{$FORMBOTTOM}','')-->
-
+</div>
 <!--/&POSTFORM-->
 <!--&FOOTER-->
 <div id="footer">
