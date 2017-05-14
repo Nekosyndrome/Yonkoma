@@ -1,3 +1,5 @@
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/yonkoma/Lobby)
+
 # Yonkoma
 
 目前用在 elsa.komica.org、komicolle.dreamhosters.com、emc4.dreamhosters.com 三個網域上的pixmicat版本。原本舊的專案在 [這裡](https://github.com/komica02/Yonkoma.js)。
@@ -19,6 +21,10 @@
 
 - [API格式](https://github.com/Nekosyndrome/yonkoma/wiki/Api)
 - 資料表格式 - pending
+
+## gitter聊天室
+
+https://gitter.im/yonkoma/Lobby
 
 ## Contact
 
