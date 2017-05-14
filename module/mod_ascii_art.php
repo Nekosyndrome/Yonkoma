@@ -33,7 +33,7 @@ class mod_ascii_art extends ModuleHelper {
 
 	public function autoHookHead(&$dat){
 		//TODO: 目前沒有css
-		$dat .= '<link rel="stylesheet" type="text/css" href="module/ascii_art/ascii_art.css" />'."\n";
+		//$dat .= '<link rel="stylesheet" type="text/css" href="module/ascii_art/ascii_art.css" />'."\n";
 	}
 
 	public function autoHookPostInfo(&$postinfo){
