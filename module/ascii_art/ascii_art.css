@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'IPAMonaPGothic';
+    src: url('ipagp-mona.woff2') format('woff2'),
+         url('ipagp-mona.woff') format('woff'),
+         url('ipagp-mona.ttf') format('ttf');
+}
+
+pre.aa{
+	font-family: 'MS PGothic', 'IPAMonaPGothic';
+}
