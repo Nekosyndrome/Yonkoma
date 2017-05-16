@@ -32,8 +32,7 @@ class mod_ascii_art extends ModuleHelper {
 	}
 
 	public function autoHookHead(&$dat){
-		//TODO: 目前沒有css
-		//$dat .= '<link rel="stylesheet" type="text/css" href="module/ascii_art/ascii_art.css" />'."\n";
+		$dat .= '<link rel="stylesheet" type="text/css" href="module/ascii_art/ascii_art.css" />'."\n";
 	}
 
 	public function autoHookPostInfo(&$postinfo){
@@ -45,7 +44,7 @@ class mod_ascii_art extends ModuleHelper {
 		if(!$this->HARD_TRANSLATE) return; // 選擇不作硬轉換
 		if(strpos($com, '[/aa]') !== false){
 			$com = preg_replace('/\[aa(?:=(\S*?))?](?:<br \/>)?(.*?)(?:<br \/>)?\[\/aa\]/us',
-				'<pre class="aa" style="font-family: \'MS PGothic\'">$2</pre>', $com);
+				'<pre class="aa">$2</pre>', $com);
 		}
 	}
 
@@ -55,7 +54,7 @@ class mod_ascii_art extends ModuleHelper {
 		if(strpos($arrLabels['{$COM}'], '[/aa]')===false) return;
 
 		$arrLabels['{$COM}'] = preg_replace('/\[aa(?:=(\S*?))?](?:<br \/>)?(.*?)(?:<br \/>)?\[\/aa\]/us',
-			'<pre class="aa" style="font-family: \'MS PGothic\'">$2</pre>', $arrLabels['{$COM}']);
+			'<pre class="aa">$2</pre>', $arrLabels['{$COM}']);
 	}
 
 	public function autoHookThreadReply(&$arrLabels, $post, $isReply){
