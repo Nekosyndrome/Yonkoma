@@ -348,7 +348,7 @@ function arrangeThread($PTE, $tree, $tree_cut, $posts, $hiddenReply, $resno=0, $
 					if(isset($tree_clone[$val[2]])){
 						$r_page = $tree_clone[$val[2]]; // 引用回應在整體討論串中的位置
 						// 在此頁顯示區間內，輸出錨點即可
-						if(isset($tree_cut[$val[2]])) $com = str_replace($val[0], '<a class="qlink" href="#r'.$val[2].'" onclick="replyhl('.$val[2].');">'.$val[0].'</a>', $com);
+						if(isset($tree_cut[$val[2]])) $com = str_replace($val[0], '<a class="qlink" href="#r'.$val[2].'">'.$val[0].'</a>', $com);
 						// 非此頁顯示區間，輸出完整頁面位置
 						else $com = str_replace($val[0], '<a class="qlink" href="'.PHP_SELF.'?res='.$tree[0].(RE_PAGE_DEF ? '&amp;page_num='.floor(($r_page - 1) / RE_PAGE_DEF) : '').'#r'.$val[2].'">'.$val[0].'</a>', $com);
 					}
