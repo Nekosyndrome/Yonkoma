@@ -46,6 +46,7 @@ require ROOTPATH.'lib/pmclibrary.php'; // 引入函式庫
 require ROOTPATH.'lib/lib_errorhandler.php'; // 引入全域錯誤捕捉
 require ROOTPATH.'lib/lib_compatible.php'; // 引入相容函式庫
 require ROOTPATH.'lib/lib_common.php'; // 引入共通函式檔案
+require ROOTPATH.'lib/webm.php';
 
 /* 更新記錄檔檔案／輸出討論串 */
 function updatelog($resno=0,$page_num=-1,$single_page=false){
@@ -347,7 +348,7 @@ function arrangeThread($PTE, $tree, $tree_cut, $posts, $hiddenReply, $resno=0, $
 					if(isset($tree_clone[$val[2]])){
 						$r_page = $tree_clone[$val[2]]; // 引用回應在整體討論串中的位置
 						// 在此頁顯示區間內，輸出錨點即可
-						if(isset($tree_cut[$val[2]])) $com = str_replace($val[0], '<a class="qlink" href="#r'.$val[2].'" onclick="replyhl('.$val[2].');">'.$val[0].'</a>', $com);
+						if(isset($tree_cut[$val[2]])) $com = str_replace($val[0], '<a class="qlink" href="#r'.$val[2].'">'.$val[0].'</a>', $com);
 						// 非此頁顯示區間，輸出完整頁面位置
 						else $com = str_replace($val[0], '<a class="qlink" href="'.PHP_SELF.'?res='.$tree[0].(RE_PAGE_DEF ? '&amp;page_num='.floor(($r_page - 1) / RE_PAGE_DEF) : '').'#r'.$val[2].'">'.$val[0].'</a>', $com);
 					}
@@ -474,8 +475,10 @@ function regist(){
 	foreach(array($name, $email, $sub, $com) as $anti) if(anti_sakura($anti)) error(_T('regist_sakuradetected'));
 
 	// 時間
-	$time = time();
-	$tim = $time.substr(microtime(),2,3);
+	// NOTE: 32bit not support
+	$tim = round(microtime(TRUE) * 1000);
+	$time = floor($tim/1000);
+	$tim = (string)$tim;
 
 	// 判斷上傳狀態
 	switch($upfile_status){
@@ -534,7 +537,22 @@ function regist(){
 
 		// 三‧檢查是否為可接受的檔案
 		$size = @getimagesize($dest);
-		if(!is_array($size)) error(_T('regist_upload_notimage'), $dest); // $size不為陣列就不是圖檔
+		$video = null;
+		$is_webm = false;
+		if(!is_array($size)) {
+			if(USE_WEBM) {
+				$video = new webm($dest);
+				if($video->is_valid_webm()) $is_webm = true;
+				if($is_webm && (!ALLOW_WEBM_AUDIO) && $video->has_audio_stream())
+					error("不接受有聲音的webm", $dest);
+				$size = array(
+					$video->width,
+					$video->height,
+					'webm'
+				);
+			}
+			if(!$is_webm) error(_T('regist_upload_notimage'), $dest);
+		}
 		$imgsize = @filesize($dest); // 檔案大小
 		$imgsize = ($imgsize>=1024) ? (int)($imgsize/1024).' KB' : $imgsize.' B'; // KB和B的判別
 		switch($size[2]){ // 判斷上傳附加圖檔之格式
@@ -545,6 +563,7 @@ function regist(){
 			case 5 : $ext = ".psd"; break;
 			case 6 : $ext = ".bmp"; break;
 			case 13 : $ext = ".swf"; break;
+			case 'webm' : $ext = ".webm"; break;
 			default : $ext = ".xxx"; error(_T('regist_upload_notsupport'), $dest);
 		}
 		$allow_exts = explode('|', strtolower(ALLOW_UPLOAD_EXT)); // 接受之附加圖檔副檔名
@@ -626,7 +645,7 @@ function regist(){
 	$pass = $pwd ? substr(md5($pwd), 2, 8) : '*'; // 生成真正儲存判斷用的密碼
 	$youbi = array(_T('sun'),_T('mon'),_T('tue'),_T('wed'),_T('thu'),_T('fri'),_T('sat'));
 	$yd = $youbi[gmdate('w', $time+TIME_ZONE*60*60)];
-	$now = gmdate('y/m/d', $time+TIME_ZONE*60*60).'('.(string)$yd.')'.gmdate('H:i', $time+TIME_ZONE*60*60);
+	$now = gmdate('y/m/d', $time+TIME_ZONE*60*60).'('.(string)$yd.')'.gmdate('H:i:s', $time+TIME_ZONE*60*60);
 	if(DISP_ID){ // 顯示ID
 		if($email && DISP_ID==1) $now .= ' ID:???';
 		else $now .= ' ID:'.substr(crypt(md5(getREMOTE_ADDR().IDSEED.gmdate('Ymd', $time+TIME_ZONE*60*60)),'id'), -8);
@@ -708,13 +727,20 @@ function regist(){
 		$destFile = IMG_DIR.$tim.$ext; // 圖檔儲存位置
 		$thumbFile = THUMB_DIR.$tim.'s.'.$THUMB_SETTING['Format']; // 預覽圖儲存位置
 		if(USE_THUMB !== 0){ // 生成預覽圖
-			$thumbType = USE_THUMB; if(USE_THUMB==1){ $thumbType = 'gd'; } // 與舊設定相容
-			require(ROOTPATH.'lib/thumb/thumb.'.$thumbType.'.php');
-			$thObj = new ThumbWrapper($dest, $imgW, $imgH);
-			$thObj->setThumbnailConfig($W, $H, $THUMB_SETTING);
-			$thObj->makeThumbnailtoFile($thumbFile);
-			@chmod($thumbFile, 0666);
-			unset($thObj);
+			if($is_webm) {
+				$video = new webm($dest);
+				$video->create_thumbnail($thumbFile, $W, $H);
+				@chmod($thumbFile, 0666);
+			}
+			else {
+				$thumbType = USE_THUMB; if(USE_THUMB==1){ $thumbType = 'gd'; } // 與舊設定相容
+				require(ROOTPATH.'lib/thumb/thumb.'.$thumbType.'.php');
+				$thObj = new ThumbWrapper($dest, $imgW, $imgH);
+				$thObj->setThumbnailConfig($W, $H, $THUMB_SETTING);
+				$thObj->makeThumbnailtoFile($thumbFile);
+				@chmod($thumbFile, 0666);
+				unset($thObj);
+			}
 		}
 		rename($dest, $destFile);
 		if(file_exists($destFile)){

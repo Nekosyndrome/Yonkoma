@@ -78,7 +78,7 @@ function form(&$dat, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail
 		$PMS->useModuleMethods('LinksAboveBar', array(&$links,'reply',$resno)); // "LinksAboveBar" Hook Point
 		$pte_vals['{$FORMTOP}'] = $links.'<div class="bar_reply">'._T('form_top').'</div>';
 	}
-	if(USE_FLOATFORM && !$resno && $iscollapse) $pte_vals['{$FORMTOP}'] .= "\n".'[<span id="show" class="hide"">'._T('form_showpostform').'</span><span id="hide" class="show"">'._T('form_hidepostform').'</span>]';
+	if(USE_FLOATFORM && !$resno && $iscollapse) $pte_vals['{$FORMTOP}'] .= "\n".'[<span id="show" class="hide">'._T('form_showpostform').'</span><span id="hide" class="show">'._T('form_hidepostform').'</span>]';
 	$pte_vals += array('{$MAX_FILE_SIZE}' => MAX_KB * 1024,
 		'{$RESTO}' => $resno ? '<input type="hidden" name="resto" value="'.$resno.'" />' : '',
 		'{$FORM_NAME_TEXT}' => _T('form_name'),
@@ -134,7 +134,7 @@ function foot(&$dat){
 
 	$pte_vals = array('{$FOOTER}'=>'<!-- GazouBBS v3.0 --><!-- ふたば改0.8 --><!-- Pixmicat! -->');
 	$PMS->useModuleMethods('Foot', array(&$pte_vals['{$FOOTER}'])); // "Foot" Hook Point
-	$pte_vals['{$FOOTER}'] .= '<small>- <a rel="nofollow noreferrer license" href="http://php.s3.to" target="_blank">GazouBBS</a> + <a rel="nofollow noreferrer license" href="http://www.2chan.net/" target="_blank">futaba</a> + <a rel="nofollow noreferrer license" href="http://pixmicat.openfoundry.org/" target="_blank">Pixmicat!</a> -</small>';
+	$pte_vals['{$FOOTER}'] .= '<small>- <a rel="nofollow noreferrer license" href="http://php.s3.to" target="_blank">GazouBBS</a> + <a rel="nofollow noreferrer license" href="http://www.2chan.net/" target="_blank">futaba</a> + <a rel="nofollow noreferrer license" href="https://github.com/pixmicat/pixmicat" target="_blank">Pixmicat!</a> -</small>';
 	$dat .= $PTE->ParseBlock('FOOTER',$pte_vals);
 }
 

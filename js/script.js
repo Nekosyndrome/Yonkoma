@@ -903,6 +903,18 @@ function hideform() {
 		var pos = 0;
 		var INF = 2000000000;
 		var nos = [];
+		
+		//顯示展開中文字，避免連點展開
+		var originalHtml = $(threadNode[op]).find('.-expand-thread').parent().clone();
+		
+		var ignore = $(threadNode[op]).find('.-expand-thread').parent();
+		var expandingHtml = '<span class="-expand-thread text-button">[展開中]</span>';
+		ignore.html(expandingHtml);
+		expandingHtml = '<span class="-expand-thread text-button -fixScroll">[展開中]</span>';
+		if (!$.isMobile()) {
+			expandingHtml = '<span class="-expand-thread text-button -fixScroll" style="margin-left: 1em;">[展開中]</span>';
+		}
+		
 		$(threadNode[op]).find('.post').each(function(){
 			nos.push( parseInt($(this).attr('data-no')) );
 		});
@@ -940,6 +952,14 @@ function hideform() {
 					_collapseThread(op, $(this).hasClass('-fixScroll'));
 				});
 			}
+		})
+		.fail(function(jqXHR, textStatus, errorThrown){ 
+			//展開失敗，改回展開按鈕
+			var ignore = $(threadNode[op]).find('.-expand-thread').parent();
+			ignore.html(originalHtml);
+			ignore.find('.-expand-thread').click(function(){
+				_expandThread(op);
+			});
 		});
 	}
 	

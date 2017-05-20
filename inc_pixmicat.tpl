@@ -50,7 +50,7 @@ var ext="{$ALLOW_UPLOAD_EXT}".toUpperCase().split("|");
 
 <!--&IF($RESTO,'{$RESTO}','')-->
 <div style="text-align: center;">
-<table id="postform_tbl" style="padding: 10px;border-spacing; 10px; margin: 0px auto; text-align: left;">
+<table id="postform_tbl" style="padding: 10px;border-spacing: 10px; margin: 0px auto; text-align: left;">
 <tr><td class="Form_bg"><b>{$FORM_NAME_TEXT}</b></td><td>{$FORM_NAME_FIELD} {$FORM_SUBMIT}</td></tr>
 <!--&IF($MAIN_PAGE,'<tr><td class="Form_bg"><b>{$FORM_TOPIC_TEXT}</b></td><td>{$FORM_TOPIC_FIELD}</td></tr>','')-->
 <tr><td class="Form_bg"><b>{$FORM_COMMENT_TEXT}</b></td><td>{$FORM_COMMENT_FIELD}</td></tr>
@@ -76,7 +76,7 @@ var ext="{$ALLOW_UPLOAD_EXT}".toUpperCase().split("|");
 
 </form>
 <!--&IF($FORMBOTTOM,'{$FORMBOTTOM}','')-->
-
+</div>
 <!--/&POSTFORM-->
 <!--&FOOTER-->
 <div id="footer">

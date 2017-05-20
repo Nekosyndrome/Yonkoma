@@ -196,16 +196,16 @@ class mod_ajax{
 				'{$NOW}'=>$now,
 				'{$CATEGORY}'=>$category,
 				'{$QUOTEBTN}'=>$QUOTEBTN,
-				'{$IMG_BAR}'=>$IMG_BAR,
-				'{$IMG_SRC}'=>$imgsrc,
-				'{$WARN_BEKILL}'=>$WARN_BEKILL,
+				'{$IMG_BAR}'=>isset($IMG_BAR) ? $IMG_BAR : '',
+				'{$IMG_SRC}'=>isset($imgsrc) ? $imgsrc : '',
+				'{$WARN_BEKILL}'=>isset($WARN_BEKILL) ? $WARN_BEKILL : '',
 				'{$NAME_TEXT}'=>_T('post_name'),
 				'{$CATEGORY_TEXT}'=>_T('post_category'),
 				'{$SELF}'=>PHP_SELF,
 				'{$COM}'=>$com
 			);
-			if($resno) $arrLabels['{$RESTO}']=$resno;
-			$PMS->useModuleMethods('ThreadReply', array(&$arrLabels, $posts[$i], $resno)); // "ThreadReply" Hook Point
+			if(isset($resno) && $resno) $arrLabels['{$RESTO}']=$resno;
+			$PMS->useModuleMethods('ThreadReply', array(&$arrLabels, $post, 1)); // "ThreadReply" Hook Point
 			return $PTE->ParseBlock('REPLY',$arrLabels);
 		}
 		else // 首篇
@@ -217,19 +217,19 @@ class mod_ajax{
 				'{$NOW}'=>$now,
 				'{$CATEGORY}'=>$category,
 				'{$QUOTEBTN}'=>$QUOTEBTN,
-				'{$REPLYBTN}'=>$REPLYBTN,
-				'{$IMG_BAR}'=>$IMG_BAR,
-				'{$IMG_SRC}'=>$imgsrc,
-				'{$WARN_OLD}'=>$WARN_OLD,
-				'{$WARN_BEKILL}'=>$WARN_BEKILL,
-				'{$WARN_ENDREPLY}'=>$WARN_ENDREPLY,
-				'{$WARN_HIDEPOST}'=>$WARN_HIDEPOST,
+				'{$REPLYBTN}'=>isset($REPLYBTN) ? $REPLYBTN : '',
+				'{$IMG_BAR}'=>isset($IMG_BAR) ? $IMG_BAR : '',
+				'{$IMG_SRC}'=>isset($imgsrc) ? $imgsrc : '',
+				'{$WARN_OLD}'=>isset($WARN_OLD) ? $WARN_OLD : '',
+				'{$WARN_BEKILL}'=>isset($WARN_BEKILL) ? $WARN_BEKILL : '',
+				'{$WARN_ENDREPLY}'=>isset($WARN_ENDREPLY) ? $WARN_ENDREPLY : '',
+				'{$WARN_HIDEPOST}'=>isset($WARN_HIDEPOST) ? $WARN_HIDEPOST : '',
 				'{$NAME_TEXT}'=>_T('post_name'),
 				'{$CATEGORY_TEXT}'=>_T('post_category'),
 				'{$SELF}'=>PHP_SELF, '{$COM}'=>$com
 			);
-			if($resno) $arrLabels['{$RESTO}']=$resno;
-			$PMS->useModuleMethods('ThreadPost', array(&$arrLabels, $posts[$i], $resno)); // "ThreadPost" Hook Point
+			if(isset($resno) && $resno) $arrLabels['{$RESTO}']=$resno;
+			$PMS->useModuleMethods('ThreadPost', array(&$arrLabels, $post, 0)); // "ThreadPost" Hook Point
 			return $PTE->ParseBlock('THREAD',$arrLabels);
 		}
 	}
