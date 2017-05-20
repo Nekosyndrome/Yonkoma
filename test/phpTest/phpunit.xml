@@ -13,7 +13,7 @@
          verbose="false">
     <testsuites>
       <testsuite name="Pixmicat Lib">
-        <directory>./</directory>
+        <directory>./PixmicatLib</directory>
       </testsuite>
     </testsuites>
     <filter>
