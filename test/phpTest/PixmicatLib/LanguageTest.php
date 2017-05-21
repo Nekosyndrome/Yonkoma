@@ -17,7 +17,7 @@ class LanguageTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame($expect, $result);
 	}
 	public function testGetLanguage() {
-		$expect = 189;
+		$expect = 187;
 		$result = count($this->Lang->getLanguage());
 		$this->assertSame($expect, $result);
 	}
@@ -27,7 +27,7 @@ class LanguageTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expect, $result);
 	}
 	public function testGetTranslationWithArgs() {
-		$expect = '³Q¦C¦b DNSBL(127.0.0.1) «ÊÂê¦W³æ¤§¤º';
+		$expect = 'è¢«åˆ—åœ¨ DNSBL(127.0.0.1) å°é–åå–®ä¹‹å…§';
 		$result = $this->Lang->getTranslation('ip_dnsbl_banned', '127.0.0.1');
 		$this->assertEquals($expect, $result);
 	}
@@ -42,12 +42,12 @@ class LanguageTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($expect, $result);
 	}
 	public function test_T() {
-		$expect = '¸ê®Æªí³Ì¨Î¤Æ';
+		$expect = 'è³‡æ–™è¡¨æœ€ä½³åŒ–';
 		$result = _T('admin_optimize');
 		$this->assertEquals($expect, $result);
 	}
 	public function test_TWithArgs() {
-		$expect = '¡i ªş¥[¹ÏÀÉ¨Ï¥Î®e¶qÁ`­p : <b>51200</b> KB ¡j';
+		$expect = 'ã€ é™„åŠ åœ–æª”ä½¿ç”¨å®¹é‡ç¸½è¨ˆ : <b>51200</b> KB ã€‘';
 		$result = _T('admin_totalsize', '51200');
 		$this->assertEquals($expect, $result);
 	}

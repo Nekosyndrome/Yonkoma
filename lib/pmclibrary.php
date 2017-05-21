@@ -56,7 +56,7 @@ class PMCLibrary {
 		global $ModuleList;
 		static $instPMS = null;
 		if ($instPMS == null) {
-			require ROOTPATH.'lib/lib_pms.php';
+			require_once ROOTPATH.'lib/lib_pms.php';
 			$instPMS = new PMS(array( // PMS 環境常數
 				'MODULE.PATH' => ROOTPATH.'module/',
 				'MODULE.PAGE' => PHP_SELF.'?mode=module&amp;load=',

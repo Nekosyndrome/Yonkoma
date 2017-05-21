@@ -33,7 +33,7 @@ function AttachLanguage($fcall){
 }
 
 // 為了相容舊寫法而保留
-$PIO = PMCLibrary::getPIOInstance();
+/*$PIO = PMCLibrary::getPIOInstance();
 $FileIO = PMCLibrary::getFileIOInstance();
 $PTE = PMCLibrary::getPTEInstance();
-$PMS = PMCLibrary::getPMSInstance();
+$PMS = PMCLibrary::getPMSInstance();*/

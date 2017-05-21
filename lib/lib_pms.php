@@ -17,7 +17,7 @@ class PMS{
 	var $CHPList;
 
 	/* Constructor */
-	function PMS($ENV){
+	function __construct($ENV){
 		$this->loaded = false; // 是否載入完成 (模組及函式)
 		$this->ENV = $ENV; // 環境變數
 		$this->hooks = array_flip(array('Head', 'Toplink', 'LinksAboveBar', 'PostInfo', 'PostForm',

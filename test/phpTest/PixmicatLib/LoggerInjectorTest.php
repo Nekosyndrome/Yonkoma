@@ -30,13 +30,41 @@ class LoggerInjectorTest extends PHPUnit_Framework_TestCase {
 	 * @expectedException PHPUnit_Framework_Error
 	 */
 	public function testInstanceInvaildInterceptor() {
-		new LoggerInjector(new TempClass(), new TempClass());
+		if (class_exists('\TypeError')) {
+			try{
+				new LoggerInjector(new TempClass(), NULL);
+			} catch (\TypeError $e) {
+				throw new \PHPUnit_Framework_Error(
+					'error',
+					0,
+					$e->getFile(),
+					$e->getLine()
+				);
+			}
+		} 
+		else {
+			new LoggerInjector(new TempClass(), NULL);
+		}
 	}
 	/**
 	 * @expectedException PHPUnit_Framework_Error
 	 */
 	public function testInstanceInvaildInterceptor2() {
-		new LoggerInjector(new TempClass(), NULL);
+		if (class_exists('\TypeError')) {
+			try{
+				new LoggerInjector(new TempClass(), NULL);
+			} catch (\TypeError $e) {
+				throw new \PHPUnit_Framework_Error(
+					'error',
+					0,
+					$e->getFile(),
+					$e->getLine()
+				);
+			}
+		} 
+		else {
+			new LoggerInjector(new TempClass(), NULL);
+		}
 	}
 	public function testCall() {
 		$this->assertEquals('Hello, Mary!', $this->agent->printMessage('Mary'));

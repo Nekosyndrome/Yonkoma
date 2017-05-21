@@ -29,8 +29,8 @@
              highLowerBound="70" />
      </logging>
     <filter>
-        <whitelist>
-            <directory>*Test.php</directory>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory>./</directory>
         </whitelist>
     </filter>
 </phpunit>

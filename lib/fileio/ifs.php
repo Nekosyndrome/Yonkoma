@@ -13,7 +13,7 @@ class IndexFS{
 	var $logfile, $backend, $index, $modified, $keylist;
 
 	/* 建構元 */
-	function IndexFS($logfile){
+	function __construct($logfile){
 		// 索引記錄檔位置
 		$this->logfile = $logfile;
 	}

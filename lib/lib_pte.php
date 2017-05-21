@@ -17,7 +17,7 @@ class PTELibrary{
 	var $tpl_block, $tpl;
 
 	/* 開啟樣板檔案並取出區塊 */
-	function PTELibrary($tplname){
+	function __construct($tplname){
 		$this->tpl_block = array();
 		$this->tpl = file_get_contents($tplname);
 	}

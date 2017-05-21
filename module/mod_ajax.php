@@ -1,12 +1,11 @@
 <?php
 
-class mod_ajax{
+class mod_ajax extends ModuleHelper{
 
 	protected $MAX_POSTS = 114514;
 
-	function __construct(){
-		global $PMS;
-		$PMS->hookModuleMethod('ModulePage', 'mod_ajax'); // 向系統登記模組專屬獨立頁面
+	function __construct($PMS){
+		parent::__construct($PMS);
 	}
 
 	/* Get the name of module */

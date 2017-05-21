@@ -88,6 +88,6 @@ class FlagHelperTest extends PHPUnit_Framework_TestCase {
 	}
 	public function testToStringClass() {
 		$fg = new FlagHelper('_flag1:1024__flag2:0_');
-		$this->assertEquals('Pixmicat\Pio\FlagHelper {status = _flag1:1024__flag2:0_}', (string) $fg);
+		$this->assertEquals('FlagHelper {status = _flag1:1024__flag2:0_}', (string) $fg);
 	}
 }

@@ -7,7 +7,7 @@ PIO - Pixmicat! data source I/O
 class FlagHelper{
 	var $_status;
 
-	function FlagHelper($status=''){
+	function __construct($status=''){
 		$this->_write($status);
 	}
 
