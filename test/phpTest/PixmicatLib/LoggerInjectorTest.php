@@ -32,7 +32,7 @@ class LoggerInjectorTest extends PHPUnit_Framework_TestCase {
 	public function testInstanceInvaildInterceptor() {
 		if (class_exists('\TypeError')) {
 			try{
-				new LoggerInjector(new TempClass(), NULL);
+				new LoggerInjector(new TempClass(), new TempClass());
 			} catch (\TypeError $e) {
 				throw new \PHPUnit_Framework_Error(
 					'error',
@@ -43,7 +43,7 @@ class LoggerInjectorTest extends PHPUnit_Framework_TestCase {
 			}
 		} 
 		else {
-			new LoggerInjector(new TempClass(), NULL);
+			new LoggerInjector(new TempClass(), new TempClass());
 		}
 	}
 	/**
