@@ -39,7 +39,7 @@ class mod_ajax{
 
 	function output_json(&$ar)
 	{
-		echo json_encode($ar);
+		echo json_encode($ar, JSON_UNESCAPED_UNICODE);
 		exit(0);
 	}
 
