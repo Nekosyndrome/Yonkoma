@@ -89,6 +89,7 @@ $PROXYHEADERlist=array(//如啓用TRUST_HTTP_X_FORWARDED_FOR，我們將相信�
 // 模組載入
 $ModuleList = array();
 $ModuleList[] = 'mod_ajax';
+$ModuleList[] = 'mod_ascii_art';
 //$ModuleList[] = 'mod_rss';
 //$ModuleList[] = 'mod_catalog';
 
