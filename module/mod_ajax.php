@@ -57,7 +57,7 @@ class mod_ajax extends ModuleHelper{
 
 	function filterPost(&$post)
 	{
-		global $FileIO;
+		$FileIO=PMCLibrary::getFileIOInstance();
 		$exp = explode(' ', $post['now']);
 
 		//no id
@@ -91,7 +91,7 @@ class mod_ajax extends ModuleHelper{
 
 	function outputAllThreads()
 	{
-		global $PIO;
+		$PIO = PMCLibrary::getPIOInstance();
 
 		$re = array(
 			'threads' => array()
@@ -121,7 +121,7 @@ class mod_ajax extends ModuleHelper{
 
 	function dumpPosts($mx, $after)
 	{
-		global $PIO;
+		$PIO = PMCLibrary::getPIOInstance();
 
 		$re = array(
 			'posts' => array()
@@ -235,7 +235,7 @@ class mod_ajax extends ModuleHelper{
 
 	function dumpThread($op, $html = false)
 	{
-		global $PIO;
+		$PIO=PMCLibrary::getPIOInstance();
 		$op = intval($op);
 		if( !$PIO->isThread($op) ) $this->output_error('thread doesnt exist');
 
