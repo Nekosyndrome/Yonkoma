@@ -1,0 +1,35 @@
+server {
+    listen 80;
+    # server_name sample.board.com;
+    # root /var/www/sample_board/;
+    index index.htm index.html index.php;
+    # access_log /var/log/nginx/yonkoma.log;
+    # include cloudflare;
+
+    # forbidden files
+    location ~ (\.log|\.db3|\.dat) {
+        return 404;
+    }
+
+    # return custom css by cookie
+    location ~ ^/custom_css {
+        # kill cache
+        add_header Last-Modified $date_gmt;
+        add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+        if_modified_since off;
+        expires off;
+        etag off;
+        default_type "text/css";
+
+        set $file "/css/empty.css";
+        set $theme $cookie_theme;        
+        if ( $theme ~ ^[a-zA-Z0-9]+\.css$ ) {
+            set $file "/css/${theme}";
+        }
+        rewrite ^ $file break;
+    }
+
+    location / {
+        include php;
+    }
+}
