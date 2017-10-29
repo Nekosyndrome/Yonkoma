@@ -21,12 +21,13 @@ class PMCLibrary {
 	 */
 	public static function getPIOInstance() {
 		global $PIOEnv;
+		global $config;
 		static $instPIO = null;
 		if ($instPIO == null) {
 			require ROOTPATH.'lib/lib_pio.php';
-			$pioExactClass = 'PIO'.PIXMICAT_BACKEND;
+			$pioExactClass = '\\Yonkoma\\Database\\Implementation\\'. ucfirst($config['db']['type']);
 			$instPIO = new LoggerInjector(
-				new $pioExactClass(CONNECTION_STRING, $PIOEnv),
+				new $pioExactClass($config['db'], $PIOEnv),
 				new LoggerInterceptor(PMCLibrary::getLoggerInstance($pioExactClass))
 			);
 		}

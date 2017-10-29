@@ -122,9 +122,6 @@ class PIOSensor{
 	}
 }
 
-// 分析連線字串
-if(preg_match('/^(.*):\/\//i', CONNECTION_STRING, $backend)) define('PIXMICAT_BACKEND', $backend[1]);
-
 // 引入必要函式庫
 $PIOEnv = array( // PIO 環境常數
 	'BOARD' => STORAGE_PATH,
@@ -136,6 +133,4 @@ $PIOEnv = array( // PIO 環境常數
 	'PERIOD.IMAGEPOST' => RENZOKU2
 );
 
-$pio_file = ROOTPATH.'lib/pio/pio.'.PIXMICAT_BACKEND.'.php';
-if(is_file($pio_file)) include($pio_file);
 ?>

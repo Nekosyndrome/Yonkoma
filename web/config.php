@@ -21,7 +21,25 @@ http://pixmicat.openfoundry.org/
 */
 /*---- Part 1：程式基本設定 ----*/
 // 伺服器常態設定
-if(!defined('DEBUG')) define("DEBUG", false); // 是否產生詳細 DEBUG 訊息
+spl_autoload_register(function ($class) {
+    $class = ltrim($class, '\\');
+    $prefix = 'Yonkoma\\';
+    $base_dir = __DIR__ . DIRECTORY_SEPARATOR. 'lib'. DIRECTORY_SEPARATOR;
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+	}
+
+	$relative_class = substr($class, $len);
+	$file = $base_dir . str_replace('\\', DIRECTORY_SEPARATOR, $relative_class) . '.php';
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+    
+if (!defined('DEBUG')) {
+    define("DEBUG", false); // 是否產生詳細 DEBUG 訊息
+}
 define("ROOTPATH", dirname(__FILE__).DIRECTORY_SEPARATOR); // 主程式根目錄
 define("STORAGE_PATH", ROOTPATH); // 圖檔、快取儲存目錄 (需具有讀寫權限 777)
 define("TIME_ZONE", '+8'); // 時區設定 (GMT時區，參照 http://wwp.greenwichmeantime.com/ )
@@ -38,6 +56,13 @@ define("FILEIO_PARAMETER", ''); // FileIO參數 (本機端儲存)
 //define("FILEIO_PARAMETER", serialize(array('http://www.example.com/~demo/satellite.cgi', true, '12345678', 'http://www.example.com/~demo/src/', true))); // FileIO參數 (Satellite)
 
 // PIO資料來源設定
+$config['db'] = array(
+    'type' => 'sqlite3',
+    //'user' => '',
+    //'password' => '',
+    //'server' => '',
+    'database' => 'yonkoma.db3',
+);
 //define("CONNECTION_STRING", 'log://img.log:tree.log/'); // PIO 連線字串 (Log)
 //define("CONNECTION_STRING", 'mysql://pixmicat:pass@localhost/test/imglog/'); // PIO 連線字串 (MySQL)
 define("CONNECTION_STRING", 'sqlite3://'.STORAGE_PATH.'pixmicat.db3/imglog/'); // PIO 連線字串 (PDO SQLite)
@@ -78,13 +103,13 @@ define("USE_CATEGORY", 1); // 是否開啟使用類別標籤分類功能 (是：
 define("USE_RE_CACHE", 1); // 是否使用回應頁面顯示快取功能 (是：1 否：0)
 define("TRUST_HTTP_X_FORWARDED_FOR", 0); // 是否利用HTTP_X_FORWARDED_FOR抓取Proxy後的真實IP。注意檔頭可能被偽造，若無特別需要請勿開啟 (是：1 否：0)
 $PROXYHEADERlist=array(//如啓用TRUST_HTTP_X_FORWARDED_FOR，我們將相信的Header,越上越優先相信。
-		'HTTP_CLIENT_IP',
-		'HTTP_X_REAL_IP',
-		'HTTP_X_FORWARDED_FOR',
-		'HTTP_X_FORWARDED',
-		'HTTP_X_CLUSTER_CLIENT_IP',
-		'HTTP_FORWARDED_FOR',
-		'HTTP_FORWARDED');
+        'HTTP_CLIENT_IP',
+        'HTTP_X_REAL_IP',
+        'HTTP_X_FORWARDED_FOR',
+        'HTTP_X_FORWARDED',
+        'HTTP_X_CLUSTER_CLIENT_IP',
+        'HTTP_FORWARDED_FOR',
+        'HTTP_FORWARDED');
 
 // 模組載入
 $ModuleList = array();
@@ -119,8 +144,8 @@ define("MAX_H", 250); // 討論串本文預覽圖片高度
 define("MAX_RW", 125); // 討論串回應預覽圖片寬度 (超過則自動縮小)
 define("MAX_RH", 125); // 討論串回應預覽圖片高度
 $THUMB_SETTING = array( // 預覽圖生成設定
-	'Format' => 'jpg',
-	'Quality' => 75
+    'Format' => 'jpg',
+    'Quality' => 75
 );
 
 // 外觀設定
