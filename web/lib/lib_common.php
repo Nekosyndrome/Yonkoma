@@ -65,7 +65,7 @@ function head(&$dat,$resno=0){
 	$pte_vals+=array('{$ALLOW_UPLOAD_EXT}' => ALLOW_UPLOAD_EXT,
 		'{$JS_REGIST_WITHOUTCOMMENT}' => str_replace('\'', '\\\'', _T('regist_withoutcomment')),
 		'{$JS_REGIST_UPLOAD_NOTSUPPORT}' => str_replace('\'', '\\\'', _T('regist_upload_notsupport')),
-		'{$JS_CONVERT_SAKURA}' => str_replace('\'', '\\\'', _T('js_convert_sakura')));
+	);
 	$dat .= $template->renderBlock('JSHEADER', transformTemplateArray($pte_vals));
 	$dat .= '</head>';
 	$pte_vals += array('{$TOP_LINKS}' => TOP_LINKS,
@@ -174,10 +174,6 @@ function fullURL(){
 	return '//'.$_SERVER['HTTP_HOST'].substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], PHP_SELF));
 }
 
-/* 反櫻花字 */
-function anti_sakura($str){
-	return preg_match('/[\x{E000}-\x{F848}]/u', $str);
-}
 
 /* 輸出錯誤畫面 */
 function error($mes, $dest=''){

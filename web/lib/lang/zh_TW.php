@@ -40,7 +40,6 @@ $language['regist_upload_notimage']		= '上傳失敗<br />不接受圖片以外�
 $language['regist_upload_notsupport']	= '附加圖檔為系統不支援的格式';
 $language['regist_upload_blocked']		= '上傳失敗<br />此附加圖檔被管理員列為禁止上傳';
 $language['regist_uploaded']			= '附加圖檔 %1$s 上傳完畢<br />';
-$language['regist_sakuradetected']		= '偵測到您有輸入櫻花日文假名';
 $language['regist_withoutname']			= '您沒有填寫名稱';
 $language['regist_withoutcomment']		= '在沒有附加圖檔的情況下，請寫入內文';
 $language['regist_nametoolong']			= '名稱過長';
@@ -194,7 +193,5 @@ $language['error_back']					= '回上頁';
 $language['ip_banned']					= '被列在 IP/Hostname 封鎖名單之內';
 $language['ip_dnsbl_banned']			= '被列在 DNSBL(%1$s) 封鎖名單之內';
 
-// mainscript.js // regist_withoutcomment,regist_upload_notsupport,js_convert_sakura
-$language['js_convert_sakura']			= '偵測到您有輸入櫻花日文假名的可能性，將自動為您轉換';
 
 ?>

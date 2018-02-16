@@ -40,7 +40,6 @@ $language['regist_upload_notimage']		= 'アップロードに失敗しました<
 $language['regist_upload_notsupport']	= 'アップロードに失敗しました<br />GIF,JPG,PNG以外の画像ファイルは受け付けません';
 $language['regist_upload_blocked']		= 'アップロードに失敗しました<br />禁止画像です';
 $language['regist_uploaded']			= '画像 %1$s のアップロードが成功しました<br />';
-$language['regist_sakuradetected']		= '櫻花仮名を検出した';
 $language['regist_withoutname']			= '名前がありません';
 $language['regist_withoutcomment']		= '何か書いて下さい';
 $language['regist_nametoolong']			= '名前が長すぎます';
@@ -193,8 +192,5 @@ $language['form_notice_noscript']		= '＊JavaScriptは無効にでもブラウ�
 $language['error_back']					= '戻る';
 $language['ip_banned']					= 'IP/ホスト名ブラックリストに記載されています。';
 $language['ip_dnsbl_banned']			= 'DNSBL(%1$s) ブラックリストに記載されています。';
-
-// mainscript.js // regist_withoutcomment,regist_upload_notsupport,js_convert_sakura
-$language['js_convert_sakura']			= '櫻花仮名を検出した。変換します。';
 
 ?>

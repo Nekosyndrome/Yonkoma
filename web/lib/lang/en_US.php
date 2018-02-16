@@ -40,7 +40,6 @@ $language['regist_upload_notimage']		= 'Upload failed.<br />Files other than ima
 $language['regist_upload_notsupport']	= 'Unsupported image.';
 $language['regist_upload_blocked']		= 'Upload failed.<br />Uploading this image is blocked.';
 $language['regist_uploaded']			= 'Image %1$s uploaded.<br />';
-$language['regist_sakuradetected']		= 'Big5 sakura Japanese characters detected.';
 $language['regist_withoutname']			= 'Please fill your name.';
 $language['regist_withoutcomment']		= 'Please fill comment field if you don\'t upload an image.';
 $language['regist_nametoolong']			= 'Name is too long.';
@@ -193,8 +192,5 @@ $language['form_notice_noscript']		= '*** You disabled JavaScript, but this won\
 $language['error_back']					= 'Back';
 $language['ip_banned']					= 'Listed in IP/Hostname Blacklist';
 $language['ip_dnsbl_banned']			= 'Listed in DNSBL(%1$s) Blacklist';
-
-// mainscript.js // regist_withoutcomment,regist_upload_notsupport,js_convert_sakura
-$language['js_convert_sakura']			= 'Big5 sakura Japanese characters detected, please try to convert to standard one.';
 
 ?>

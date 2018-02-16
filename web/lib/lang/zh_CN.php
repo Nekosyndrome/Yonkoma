@@ -40,7 +40,6 @@ $language['regist_upload_notimage']		= '上传失败<br />系统不接受图片�
 $language['regist_upload_notsupport']	= '系统不支持您所上传的图片格式';
 $language['regist_upload_blocked']		= '上传失败<br />您所上传的图片被管理员禁止上传。';
 $language['regist_uploaded']			= '图片 %1$s 已上传完毕。<br />';
-$language['regist_sakuradetected']		= '系统侦测到您输入了樱花日文假名';
 $language['regist_withoutname']			= '您没有填写昵称';
 $language['regist_withoutcomment']		= '倘若没有上传图片，请您输入文章内容。';
 $language['regist_nametoolong']			= '您的昵称过长';
@@ -193,8 +192,5 @@ $language['form_notice_noscript']		= '＊您的浏览器已关闭JavaScript，�
 $language['error_back']					= '返回上页';
 $language['ip_banned']					= '被列在 IP/Hostname 黑名单之內';
 $language['ip_dnsbl_banned']			= '被列在 DNSBL(%1$s) 黑名单之內';
-
-// mainscript.js // regist_withoutcomment,regist_upload_notsupport,js_convert_sakura
-$language['js_convert_sakura']			= '系统侦测到您可能输入了樱花日文假名，将为您自动转换。';
 
 ?>

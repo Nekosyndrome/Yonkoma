@@ -474,10 +474,7 @@ function regist(){
 			error(_T('regist_wordfiltered'));
 		}
 	}
-
-	// 檢查是否輸入櫻花日文假名
-	foreach(array($name, $email, $sub, $com) as $anti) if(anti_sakura($anti)) error(_T('regist_sakuradetected'));
-
+	
 	// 時間
 	// NOTE: 32bit not support
 	$tim = round(microtime(TRUE) * 1000);
