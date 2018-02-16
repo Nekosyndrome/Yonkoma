@@ -22,36 +22,6 @@ function transformTemplateArray($input)
 	return $result;
 }
 
-// Windows PHP 5.2.0 does not have this function implemented.
-if (!function_exists('inet_pton')) {
-	// Source: http://stackoverflow.com/a/14568699
-	function inet_pton($ip){
-		# ipv4
-		if (strpos($ip, '.') !== FALSE) {
-			if (strpos($ip, ':') === FALSE) $ip = pack('N',ip2long($ip));
-			else {
-				$ip = explode(':',$ip);
-				$ip = pack('N',ip2long($ip[count($ip)-1]));
-			}
-		}
-		# ipv6
-		elseif (strpos($ip, ':') !== FALSE) {
-			$ip = explode(':', $ip);
-			$parts=8-count($ip);
-			$res='';$replaced=0;
-			foreach ($ip as $seg) {
-				if ($seg!='') $res .= str_pad($seg, 4, '0', STR_PAD_LEFT);
-				elseif ($replaced==0) {
-					for ($i=0;$i<=$parts;$i++) $res.='0000';
-					$replaced=1;
-				} elseif ($replaced==1) $res.='0000';
-			}
-			$ip = pack('H'.strlen($res), $res);
-		}
-		return $ip;
-	}
-}
- 
 
 /* 輸出表頭 */
 function head(&$dat,$resno=0){
@@ -343,16 +313,6 @@ function adminAuthenticate($mode){
 }
 
 function getREMOTE_ADDR(){
-    $ipCloudFlare = getRemoteAddrCloudFlare();
-    if (!empty($ipCloudFlare)) {
-        return $ipCloudFlare;
-    }
-
-    $ipOpenShift = getRemoteAddrOpenShift();
-    if (!empty($ipOpenShift)) {
-        return $ipOpenShift;
-    }
-
     $ipProxy = getRemoteAddrThroughProxy();
     if (!empty($ipProxy)) {
         return $ipProxy;
@@ -371,14 +331,14 @@ function getRemoteAddrThroughProxy() {
         return '';
     }
     $ip='';
-    $proxy = $PROXYHEADERlist;
-    
+	$proxy = $PROXYHEADERlist;
+	
 	foreach ($proxy as $key) {
 		if (array_key_exists($key, $_SERVER)) {
 			foreach (explode(',', $_SERVER[$key]) as $ip) {
 				$ip = trim($ip);
 				// 如果結果為 Private IP 或 Reserved IP，捨棄改用 REMOTE_ADDR
-				if (filter_var($ip, FILTER_VALIDATE_IP,FILTER_FLAG_IPV4 |FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !==false) {
+				if (filter_var($ip, FILTER_VALIDATE_IP) !==false) {
 					return $ip;
 				}
 			}
@@ -388,51 +348,6 @@ function getRemoteAddrThroughProxy() {
     return '';
 }
 
-/**
- * (OpenShift) 取得 Client IP Address
- *
- * @return string IP Address
- * @since 8th.Release
- */
-function getRemoteAddrOpenShift() {
-    if (isset($_ENV['OPENSHIFT_REPO_DIR'])) {
-        return $_SERVER['HTTP_X_FORWARDED_FOR'];
-    }
-    return '';
-}
-
-/**
- * 若來源是 CloudFlare IP, 從 CF-Connecting-IP 取得 client IP
- * CloudFlare IP 來源: https://www.cloudflare.com/ips
-*/
-
-function getRemoteAddrCloudFlare() {
-	$addr = $_SERVER['REMOTE_ADDR'];
-	if( TRUST_HTTP_X_FORWARDED_FOR && isset($_SERVER['HTTP_X_FORWARDED_FOR']) ) $addr = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    $cloudflare_v4 = array('199.27.128.0/21', '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22', '141.101.64.0/18', '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20', '197.234.240.0/22', '198.41.128.0/17', '162.158.0.0/15', '104.16.0.0/12',
-    	'131.0.72.0/22',
-    	'172.64.0.0/13'
-    );
-    $cloudflare_v6 = array('2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32', '2405:8100::/32',
-    	'2c0f:f248::/32',
-    	'2a06:98c0::/29'
-    );
-
-    if(filter_var($addr, FILTER_VALIDATE_IP,FILTER_FLAG_IPV4)) { //v4 address
-        foreach ($cloudflare_v4 as &$cidr) {
-            if(matchCIDR($addr, $cidr)) {
-                return $_SERVER['HTTP_CF_CONNECTING_IP'];
-            }
-        }
-    } else { // v6 address
-        foreach ($cloudflare_v6 as &$cidr) {
-            if(matchCIDRv6($addr, $cidr)) {
-                return $_SERVER['HTTP_CF_CONNECTING_IP'];
-            }
-        }
-    }
-    return '';
-}
 
 function strlenUnicode($str) {
     return mb_strlen($str, 'UTF-8');
