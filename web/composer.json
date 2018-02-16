@@ -1,4 +1,10 @@
-{ 
+{
+    "name" : "Nekosyndrome/yonkoma",
+    "autoload" : {
+        "psr-4": {
+            "Yonkoma\\": "lib/"
+        }
+    },
     "require" : {
         "php": ">=7.0.0",
         "twig/twig" : "^2.0"

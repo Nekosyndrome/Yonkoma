@@ -23,22 +23,6 @@ http://pixmicat.openfoundry.org/
 // 伺服器常態設定
 require_once __DIR__. '/vendor/autoload.php';
 
-
-spl_autoload_register(function ($class) {
-    $class = ltrim($class, '\\');
-    $prefix = 'Yonkoma\\';
-    $base_dir = __DIR__ . DIRECTORY_SEPARATOR. 'lib'. DIRECTORY_SEPARATOR;
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return;
-	}
-
-	$relative_class = substr($class, $len);
-	$file = $base_dir . str_replace('\\', DIRECTORY_SEPARATOR, $relative_class) . '.php';
-    if (file_exists($file)) {
-        require $file;
-    }
-});
     
 if (!defined('DEBUG')) {
     define("DEBUG", false); // 是否產生詳細 DEBUG 訊息
