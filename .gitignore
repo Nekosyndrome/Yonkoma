@@ -1,4 +1,4 @@
 web/json/
 web/vendor/
 web/composer.lock
-
+web/config.php

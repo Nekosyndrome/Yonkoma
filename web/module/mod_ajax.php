@@ -142,7 +142,8 @@ class mod_ajax extends ModuleHelper{
 		$PIO = PMCLibrary::getPIOInstance();
 		$FileIO = PMCLibrary::getFileIOInstance();
 		$PMS = PMCLibrary::getPMSInstance();
-		$PTE = PMCLibrary::getPTEInstance();
+		$twig = PMCLibrary::getTwig();
+		$template = $twig->loadTemplate('page.twig');
 		$tree = array_flip($tree);
 		extract($post);
 
@@ -205,7 +206,7 @@ class mod_ajax extends ModuleHelper{
 			);
 			if(isset($resno) && $resno) $arrLabels['{$RESTO}']=$resno;
 			$PMS->useModuleMethods('ThreadReply', array(&$arrLabels, $post, 1)); // "ThreadReply" Hook Point
-			return $PTE->ParseBlock('REPLY',$arrLabels);
+			return $template->renderBlock('REPLY', transformTemplateArray($arrLabels));
 		}
 		else // 首篇
 		{
@@ -229,7 +230,7 @@ class mod_ajax extends ModuleHelper{
 			);
 			if(isset($resno) && $resno) $arrLabels['{$RESTO}']=$resno;
 			$PMS->useModuleMethods('ThreadPost', array(&$arrLabels, $post, 0)); // "ThreadPost" Hook Point
-			return $PTE->ParseBlock('THREAD',$arrLabels);
+			return $template->renderBlock('THREAD', transformTemplateArray($arrLabels));
 		}
 	}
 

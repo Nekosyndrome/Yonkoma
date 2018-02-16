@@ -9,6 +9,19 @@
  * @date $Date$
  */
  
+//TODO: fix this shit
+function transformTemplateArray($input)
+{
+	$result = [];
+	foreach ($input as $key=>$val) {
+		$newKey = str_replace('$', '', $key);
+		$newKey = str_replace('{', '', $newKey);
+		$newKey = str_replace('}', '', $newKey);
+		$result[$newKey] = $val;
+	}
+	return $result;
+}
+
 // Windows PHP 5.2.0 does not have this function implemented.
 if (!function_exists('inet_pton')) {
 	// Source: http://stackoverflow.com/a/14568699
@@ -42,17 +55,18 @@ if (!function_exists('inet_pton')) {
 
 /* 輸出表頭 */
 function head(&$dat,$resno=0){
-	$PTE = PMCLibrary::getPTEInstance();
 	$PMS = PMCLibrary::getPMSInstance();
+	$twig = PMCLibrary::getTwig();
+	$template = $twig->loadTemplate('page.twig');
 
 	$pte_vals = array('{$TITLE}'=>TITLE,'{$RESTO}'=>$resno?$resno:'');
-	$dat .= $PTE->ParseBlock('HEADER',$pte_vals);
+	$dat .= $template->renderBlock('HEADER', transformTemplateArray($pte_vals));
 	$PMS->useModuleMethods('Head', array(&$dat,$resno)); // "Head" Hook Point
 	$pte_vals+=array('{$ALLOW_UPLOAD_EXT}' => ALLOW_UPLOAD_EXT,
 		'{$JS_REGIST_WITHOUTCOMMENT}' => str_replace('\'', '\\\'', _T('regist_withoutcomment')),
 		'{$JS_REGIST_UPLOAD_NOTSUPPORT}' => str_replace('\'', '\\\'', _T('regist_upload_notsupport')),
 		'{$JS_CONVERT_SAKURA}' => str_replace('\'', '\\\'', _T('js_convert_sakura')));
-	$dat .= $PTE->ParseBlock('JSHEADER',$pte_vals);
+	$dat .= $template->renderBlock('JSHEADER', transformTemplateArray($pte_vals));
 	$dat .= '</head>';
 	$pte_vals += array('{$TOP_LINKS}' => TOP_LINKS,
 		'{$HOME}' => '[<a href="'.HOME.'" target="_top">'._T('head_home').'</a>]',
@@ -62,14 +76,15 @@ function head(&$dat,$resno=0){
 		'{$SEARCH}' => (USE_SEARCH) ? '[<a href="'.PHP_SELF.'?mode=search">'._T('head_search').'</a>]' : '',
 		'{$HOOKLINKS}' => '');
 	$PMS->useModuleMethods('Toplink', array(&$pte_vals['{$HOOKLINKS}'],$resno)); // "Toplink" Hook Point
-	$dat .= $PTE->ParseBlock('BODYHEAD',$pte_vals);
+	$dat .= $template->renderBlock('BODYHEAD', transformTemplateArray($pte_vals));
 }
 
 /* 發表用表單輸出 */
 function form(&$dat, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail='', $sub='', $com='', $cat='', $mode='regist'){
 	global $ADDITION_INFO;
-	$PTE = PMCLibrary::getPTEInstance();
 	$PMS = PMCLibrary::getPMSInstance();
+	$twig = PMCLibrary::getTwig();
+	$template = $twig->loadTemplate('page.twig');
 
 	$pte_vals = array('{$SELF}'=>$retURL, '{$FORMTOP}'=>'', '{$MODE}'=>$mode);
 	$isedit = ($mode == 'edit'); // 是否為編輯模式
@@ -124,18 +139,19 @@ function form(&$dat, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail
 	$PMS->useModuleMethods('PostInfo', array(&$pte_vals['{$HOOKPOSTINFO}'])); // "PostInfo" Hook Point
 
 	if(USE_FLOATFORM && !$resno && $iscollapse) $pte_vals['{$FORMBOTTOM}'] = '<script type="text/javascript">hideform();</script>';
-	$dat .= $PTE->ParseBlock('POSTFORM',$pte_vals);
+	$dat .= $template->renderBlock('POSTFORM', transformTemplateArray($pte_vals));
 }
 
 /* 輸出頁尾文字 */
 function foot(&$dat){
-	$PTE = PMCLibrary::getPTEInstance();
 	$PMS = PMCLibrary::getPMSInstance();
+	$twig = PMCLibrary::getTwig();
+	$template = $twig->loadTemplate('page.twig');
 
 	$pte_vals = array('{$FOOTER}'=>'<!-- GazouBBS v3.0 --><!-- ふたば改0.8 --><!-- Pixmicat! -->');
 	$PMS->useModuleMethods('Foot', array(&$pte_vals['{$FOOTER}'])); // "Foot" Hook Point
 	$pte_vals['{$FOOTER}'] .= '<small>- <a rel="nofollow noreferrer license" href="http://php.s3.to" target="_blank">GazouBBS</a> + <a rel="nofollow noreferrer license" href="http://www.2chan.net/" target="_blank">futaba</a> + <a rel="nofollow noreferrer license" href="https://github.com/pixmicat/pixmicat" target="_blank">Pixmicat!</a> -</small>';
-	$dat .= $PTE->ParseBlock('FOOTER',$pte_vals);
+	$dat .= $template->renderBlock('FOOTER', transformTemplateArray($pte_vals));
 }
 
 /* 網址自動連結 */
@@ -165,13 +181,14 @@ function anti_sakura($str){
 
 /* 輸出錯誤畫面 */
 function error($mes, $dest=''){
-	$PTE = PMCLibrary::getPTEInstance();
+	$twig = PMCLibrary::getTwig();
+	$template = $twig->loadTemplate('page.twig');
 
 	if(is_file($dest)) unlink($dest);
 	$pte_vals = array('{$SELF2}'=>PHP_SELF2.'?'.time(), '{$MESG}'=>$mes, '{$RETURN_TEXT}'=>_T('return'), '{$BACK_TEXT}'=>_T('error_back'));
 	$dat = '';
 	head($dat);
-	$dat .= $PTE->ParseBlock('ERROR',$pte_vals);
+	$dat .= $template->renderBlock('ERROR', transformTemplateArray($pte_vals));
 	foot($dat);
 	exit($dat);
 }

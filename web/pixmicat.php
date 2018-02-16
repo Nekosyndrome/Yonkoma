@@ -53,8 +53,9 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 	global $LIMIT_SENSOR;
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
-	$PTE = PMCLibrary::getPTEInstance();
 	$PMS = PMCLibrary::getPMSInstance();
+	$twig = PMCLibrary::getTwig();
+	$template = $twig->loadTemplate('page.twig');
 
 	$adminMode = adminAuthenticate('check') && $page_num != -1 && !$single_page; // 前端管理模式
 	$adminFunc = ''; // 前端管理選擇
@@ -174,7 +175,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 			$tree = $PIO->fetchPostList($tID); // 整個討論串樹狀結構
 			$tree_cut = array_slice($tree, $RES_start, $RES_amount); array_unshift($tree_cut, $tID); // 取出特定範圍回應
 			$posts = $PIO->fetchPosts($tree_cut); // 取得文章架構內容
-			$pte_vals['{$THREADS}'] .= arrangeThread($PTE, $tree, $tree_cut, $posts, $hiddenReply, $resno, $arr_kill, $arr_old, $kill_sensor, $old_sensor, true, $adminMode); // 交給這個函式去搞討論串印出
+			$pte_vals['{$THREADS}'] .= arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno, $arr_kill, $arr_old, $kill_sensor, $old_sensor, true, $adminMode); // 交給這個函式去搞討論串印出
 		}
 		$pte_vals['{$PAGENAV}'] = '<div id="page_switch">';
 
@@ -278,7 +279,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 		}
 		$pte_vals['{$PAGENAV}'] .= '<br style="clear: left;" />
 </div>';
-		$dat .= $PTE->ParseBlock('MAIN', $pte_vals);
+		$dat .= $template->renderBlock('MAIN', transformTemplateArray($pte_vals));
 		foot($dat);
 
 		// 存檔 / 輸出
@@ -310,10 +311,12 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 }
 
 /* 輸出討論串架構 */
-function arrangeThread($PTE, $tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_kill, $arr_old, $kill_sensor, $old_sensor, $showquotelink=true, $adminMode=false){
+function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_kill, $arr_old, $kill_sensor, $old_sensor, $showquotelink=true, $adminMode=false){
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
 	$PMS = PMCLibrary::getPMSInstance();
+	$twig = PMCLibrary::getTwig();
+	$template = $twig->loadTemplate('page.twig');
 
 	$thdat = ''; // 討論串輸出碼
 	$posts_count = count($posts); // 迴圈次數
@@ -414,15 +417,16 @@ function arrangeThread($PTE, $tree, $tree_cut, $posts, $hiddenReply, $resno=0, $
 			$arrLabels = array('{$NO}'=>$no, '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$CATEGORY}'=>$category, '{$QUOTEBTN}'=>$QUOTEBTN, '{$IMG_BAR}'=>$IMG_BAR, '{$IMG_SRC}'=>$imgsrc, '{$WARN_BEKILL}'=>$WARN_BEKILL, '{$NAME_TEXT}'=>_T('post_name'), '{$CATEGORY_TEXT}'=>_T('post_category'), '{$SELF}'=>PHP_SELF, '{$COM}'=>$com);
 			if($resno) $arrLabels['{$RESTO}']=$resno;
 			$PMS->useModuleMethods('ThreadReply', array(&$arrLabels, $posts[$i], $resno)); // "ThreadReply" Hook Point
-			$thdat .= $PTE->ParseBlock('REPLY',$arrLabels);
+			$thdat .= $template->renderBlock('REPLY', transformTemplateArray($arrLabels));
 		}else{ // 首篇
 			$arrLabels = array('{$NO}'=>$no, '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$CATEGORY}'=>$category, '{$QUOTEBTN}'=>$QUOTEBTN, '{$REPLYBTN}'=>$REPLYBTN, '{$IMG_BAR}'=>$IMG_BAR, '{$IMG_SRC}'=>$imgsrc, '{$WARN_OLD}'=>$WARN_OLD, '{$WARN_BEKILL}'=>$WARN_BEKILL, '{$WARN_ENDREPLY}'=>$WARN_ENDREPLY, '{$WARN_HIDEPOST}'=>$WARN_HIDEPOST, '{$NAME_TEXT}'=>_T('post_name'), '{$CATEGORY_TEXT}'=>_T('post_category'), '{$SELF}'=>PHP_SELF, '{$COM}'=>$com);
 			if($resno) $arrLabels['{$RESTO}']=$resno;
 			$PMS->useModuleMethods('ThreadPost', array(&$arrLabels, $posts[$i], $resno)); // "ThreadPost" Hook Point
-			$thdat .= $PTE->ParseBlock('THREAD',$arrLabels);
+			$thdat .= $template->renderBlock('THREAD', transformTemplateArray($arrLabels));
 		}
 	}
-	$thdat .= $PTE->ParseBlock('THREADSEPARATE',($resno)?array('{$RESTO}'=>$resno):array());
+	$data = $resno ? ['{$RESTO}'=>$resno] : [];
+	$thdat .= $template->renderBlock('THREADSEPARATE', transformTemplateArray($data));
 	$thdat .= '</div>';
 	return $thdat;
 }
@@ -1057,8 +1061,9 @@ function total_size($delta=0){
 function search(){
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
-	$PTE = PMCLibrary::getPTEInstance();
 	$PMS = PMCLibrary::getPMSInstance();
+	$twig = PMCLibrary::getTwig();
+	$template = $twig->loadTemplate('page.twig');
 
 	if(!USE_SEARCH) error(_T('search_disabled'));
 	$searchKeyword = isset($_POST['keyword']) ? trim($_POST['keyword']) : ''; // 欲搜尋的文字
@@ -1104,7 +1109,7 @@ function search(){
 				$category = implode(', ', $ary_category2);
 			}else $category = '';
 			$arrLabels = array('{$NO}'=>'<a href="'.PHP_SELF.'?res='.($resto?$resto.'#r'.$no:$no).'">'.$no.'</a>', '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$COM}'=>$com, '{$CATEGORY}'=>$category, '{$NAME_TEXT}'=>_T('post_name'), '{$CATEGORY_TEXT}'=>_T('post_category'));
-			$resultlist .= $PTE->ParseBlock('SEARCHRESULT',$arrLabels);
+			$resultlist .= $template->renderBlock('SEARCHRESULT', transformTemplateArray($arrLabels));
 		}
 		echo $resultlist ? $resultlist : '<div style="text-align: center">'._T('search_notfound').'<br/><a href="?mode=search">'._T('search_back').'</a></div>';
 		echo "</div>";
@@ -1116,7 +1121,6 @@ function search(){
 function searchCategory(){
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
-	$PTE = PMCLibrary::getPTEInstance();
 	$PMS = PMCLibrary::getPMSInstance();
 
 	$category = isset($_GET['c']) ? strtolower(strip_tags(trim($_GET['c']))) : ''; // 搜尋之類別標籤
@@ -1146,7 +1150,7 @@ function searchCategory(){
 	$dat .= "<div>$links</div>\n";
 	for($i = 0; $i < $loglist_cut_count; $i++){
 		$posts = $PIO->fetchPosts($loglist_cut[$i]); // 取得文章內容
-		$dat .= arrangeThread($PTE, ($posts[0]['resto'] ? $posts[0]['resto'] : $posts[0]['no']), null, $posts, 0, $loglist_cut[$i], array(), array(), false, false, false); // 逐個輸出 (引用連結不顯示)
+		$dat .= arrangeThread(($posts[0]['resto'] ? $posts[0]['resto'] : $posts[0]['no']), null, $posts, 0, $loglist_cut[$i], array(), array(), false, false, false); // 逐個輸出 (引用連結不顯示)
 	}
 
 	$dat .= '<table style="border: 1px solid gray"><tr>';
@@ -1209,8 +1213,9 @@ function showstatus(){
 	global $LIMIT_SENSOR, $THUMB_SETTING;
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
-	$PTE = PMCLibrary::getPTEInstance();
 	$PMS = PMCLibrary::getPMSInstance();
+	$twig = PMCLibrary::getTwig();
+	$template = $twig->loadTemplate('page.twig');
 
 	$countline = $PIO->postCount(); // 計算投稿文字記錄檔目前資料筆數
 	$counttree = $PIO->threadCount(); // 計算樹狀結構記錄檔目前資料筆數
@@ -1275,7 +1280,7 @@ function showstatus(){
 <tr><td>'._T('info_basic_showid').'</td><td colspan="3"> '.DISP_ID.' '._T('info_basic_showid_after').'</td></tr>
 <tr><td>'._T('info_basic_cr_limit').'</td><td colspan="3"> '.BR_CHECK._T('info_basic_cr_after').'</td></tr>
 <tr><td>'._T('info_basic_timezone').'</td><td colspan="3"> GMT '.TIME_ZONE.'</td></tr>
-<tr><td>'._T('info_basic_theme').'</td><td colspan="3"> '.$PTE->BlockValue('THEMENAME').' '.$PTE->BlockValue('THEMEVER').'<br/>by '.$PTE->BlockValue('THEMEAUTHOR').'</td></tr>
+<tr><td>'._T('info_basic_theme').'</td><td colspan="3"> '.$template->renderBlock('THEMENAME', []).' '.$template->renderBlock('THEMEVER', []).'<br/>by '.$template->renderBlock('THEMEAUTHOR', []).'</td></tr>
 <tr><td style="text-align:center" colspan="4">'._T('info_dsusage_top').'</td></tr>
 <tr style="text-align:center"><td>'._T('info_basic_threadcount').'</td><td colspan="'.(isset($piosensorInfo)?'2':'3').'"> '.$counttree.' '._T('info_basic_threads').'</td>'.(isset($piosensorInfo)?'<td rowspan="2">'.$piosensorInfo.'</td>':'').'</tr>
 <tr style="text-align:center"><td>'._T('info_dsusage_count').'</td><td colspan="'.(isset($piosensorInfo)?'2':'3').'">'.$countline.'</td></tr>

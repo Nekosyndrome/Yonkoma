@@ -21,6 +21,9 @@ http://pixmicat.openfoundry.org/
 */
 /*---- Part 1：程式基本設定 ----*/
 // 伺服器常態設定
+require_once __DIR__. '/vendor/autoload.php';
+
+
 spl_autoload_register(function ($class) {
     $class = ltrim($class, '\\');
     $prefix = 'Yonkoma\\';
@@ -41,6 +44,10 @@ if (!defined('DEBUG')) {
     define("DEBUG", false); // 是否產生詳細 DEBUG 訊息
 }
 define("ROOTPATH", dirname(__FILE__).DIRECTORY_SEPARATOR); // 主程式根目錄
+$config['path'] = array(
+    'root' => dirname(__FILE__).DIRECTORY_SEPARATOR
+);
+
 define("STORAGE_PATH", ROOTPATH); // 圖檔、快取儲存目錄 (需具有讀寫權限 777)
 define("TIME_ZONE", '+8'); // 時區設定 (GMT時區，參照 http://wwp.greenwichmeantime.com/ )
 define("PIXMICAT_LANGUAGE", 'zh_TW'); // 語系語定
@@ -151,7 +158,6 @@ $THUMB_SETTING = array( // 預覽圖生成設定
 // 外觀設定
 $ADDITION_INFO = ""; // 可在表單下顯示額外文字
 $LIMIT_SENSOR = array('ByPostCountCondition'=>500); // 文章自動刪除機制設定
-define("TEMPLATE_FILE", 'inc_pixmicat.tpl'); // 樣板位置
 define("PAGE_DEF", 15); // 一頁顯示幾篇討論串
 define("ADMIN_PAGE_DEF", 20); // 管理模式下，一頁顯示幾筆資料
 define("RE_DEF", 10); // 一篇討論串最多顯示之回應筆數 (超過則自動隱藏，全部隱藏：0)

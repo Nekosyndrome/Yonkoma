@@ -31,9 +31,3 @@ function AttachLanguage($fcall){
 	call_user_func($fcall);
 	PMCLibrary::getLanguageInstance()->attachLanguage($GLOBALS['language']);
 }
-
-// 為了相容舊寫法而保留
-/*$PIO = PMCLibrary::getPIOInstance();
-$FileIO = PMCLibrary::getFileIOInstance();
-$PTE = PMCLibrary::getPTEInstance();
-$PMS = PMCLibrary::getPMSInstance();*/

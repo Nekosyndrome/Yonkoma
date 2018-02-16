@@ -7,11 +7,11 @@ class PMCLibraryTest extends PHPUnit_Framework_TestCase {
 		$PIO2 = PMCLibrary::getPIOInstance();
 		$this->assertSame($PIO1, $PIO2);
 	}
-	public function testGetPTEInstance() {
-		$PTE1 = PMCLibrary::getPTEInstance();
-		$this->assertNotNull($PTE1);
-		$PTE2 = PMCLibrary::getPTEInstance();
-		$this->assertSame($PTE1, $PTE2);
+	public function testGetTwig() {
+		$twig1 = PMCLibrary::getTwig();
+		$this->assertNotNull($twig1);
+		$twig2 = PMCLibrary::getTwig();
+		$this->assertSame($twig1, $twig2);
 	}
 	public function testGetPMSInstance() {
 		$PMS1 = PMCLibrary::getPMSInstance();
