@@ -474,7 +474,7 @@ function regist(){
 			error(_T('regist_wordfiltered'));
 		}
 	}
-	
+
 	// 時間
 	// NOTE: 32bit not support
 	$tim = round(microtime(TRUE) * 1000);
@@ -975,11 +975,11 @@ function admindel(){
 
 		// 修改欄位樣式
 		$now = preg_replace('/.{2}\/(.{5})\(.+?\)(.{5}).*/', '$1 $2', $now);
-		$name = htmlspecialchars(str_cut(html_entity_decode(strip_tags($name)), 8));
-		$sub = htmlspecialchars(str_cut(html_entity_decode($sub), 8));
+		$name = htmlspecialchars(str_prefix(html_entity_decode(strip_tags($name)), 8));
+		$sub = htmlspecialchars(str_prefix(html_entity_decode($sub), 8));
 		if($email) $name = "<a href=\"mailto:$email\">$name</a>";
 		$com = str_replace('<br />',' ',$com);
-		$com = htmlspecialchars(str_cut(html_entity_decode($com), 20));
+		$com = htmlspecialchars(str_prefix(html_entity_decode($com), 20));
 
 		// 討論串首篇停止勾選框 及 模組功能
 		$modFunc = $THstop = ' ';

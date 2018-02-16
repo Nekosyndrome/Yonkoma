@@ -172,29 +172,19 @@ function CleanStr($str, $IsAdmin=false){
 	return $str;
 }
 
-/* 適用UTF-8環境的擬substr，取出特定數目字元
-原出處：Sea Otter @ 2005.05.10
-http://www.meyu.net/star/viewthread.php?tid=267&fpage=10 */
-function str_cut($str, $maxlen=20){
-    $i = $l = 0; $len = strlen($str); $f = true; $return_str = $str;
-	while($i < $len){
-		$chars = ord($str{$i});
-		if($chars < 0x80){ $l++; $i++; }
-		elseif($chars < 0xe0){ $l++; $i += 2; }
-		elseif($chars < 0xf0){ $l += 2; $i += 3; }
-		elseif($chars < 0xf8){ $l++; $i += 4; }
-      	elseif($chars < 0xfc){ $l++; $i += 5; }
-		elseif($chars < 0xfe){ $l++; $i += 6; }
-		if(($l >= $maxlen) && $f){
-			$return_str = substr($str, 0, $i);
-			$f = false;
-		}
-		if(($l > $maxlen) && ($i <= $len)){
-			$return_str = $return_str.'…';
-			break;
-		}
-    }
-	return $return_str;
+/**
+ * return a prefix of UTF-8 string, with character max length limited
+ * 
+ * @var string $str
+ * @var integer $maxlen
+ * @return string
+ */
+function str_prefix($str, $maxlen=20) {
+	$suffix = "";
+	if (mb_strlen($str, "UTF-8") > $maxlen) {
+		$suffix = "...";
+	}
+	return mb_substr($str, 0, $maxlen, "UTF-8"). $suffix;
 }
 
 /* 檢查瀏覽器和伺服器是否支援gzip壓縮方式 */
