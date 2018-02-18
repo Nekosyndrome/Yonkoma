@@ -1,4 +1,11 @@
 location ~ \.php$ {
+    limit_conn           conlimit_php        3;
+    limit_conn_log_level warn;
+    limit_conn_status    429;
+    limit_req            zone=reqlimit_php   burst=6 nodelay;
+    limit_req_log_level  warn;
+    limit_req_status     429;
+
     fastcgi_buffers 8 16k;
     fastcgi_buffer_size 32k;
     fastcgi_split_path_info ^(.+\.php)(/.+)$;

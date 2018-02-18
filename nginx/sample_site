@@ -1,3 +1,6 @@
+limit_conn_zone $binary_remote_addr zone=conlimit_php:30m;
+limit_req_zone  $binary_remote_addr zone=reqlimit_php:30m rate=3r/s;
+
 server {
     listen 80;
     # server_name sample.board.com;
