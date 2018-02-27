@@ -6,6 +6,8 @@ location ~ \.php$ {
     limit_req_log_level  warn;
     limit_req_status     429;
 
+    access_log /var/log/nginx/php.log php;
+
     fastcgi_buffers 8 16k;
     fastcgi_buffer_size 32k;
     fastcgi_split_path_info ^(.+\.php)(/.+)$;
