@@ -1,5 +1,6 @@
 <?php
 
+use Yonkoma\Singleton;
 class PMCLibraryTest extends PHPUnit_Framework_TestCase {
 	public function testGetPIOInstance() {
 		$PIO1 = PMCLibrary::getPIOInstance();
@@ -8,9 +9,9 @@ class PMCLibraryTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame($PIO1, $PIO2);
 	}
 	public function testGetTwig() {
-		$twig1 = PMCLibrary::getTwig();
+		$twig1 = Singleton::getTwig();
 		$this->assertNotNull($twig1);
-		$twig2 = PMCLibrary::getTwig();
+		$twig2 = Singleton::getTwig();
 		$this->assertSame($twig1, $twig2);
 	}
 	public function testGetPMSInstance() {
