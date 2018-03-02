@@ -15,24 +15,6 @@ require ROOTPATH.'lib/lib_loggerinterceptor.php';
 
 class PMCLibrary {
 	/**
-	 * get twig template engine
-	 * 
-	 * @return Twig_Environment
-	 */
-	public static function getTwig()
-	{
-		global $config;
-		static $twigInstance = null;
-		if ($twigInstance === null) {
-			$loader = new Twig_Loader_Filesystem($config['path']['root']. 'template');
-			$twigInstance = new Twig_Environment($loader, array(
-				'cache' => $config['path']['root']. 'cache/twig',
-			));
-		}
-		return $twigInstance;
-	}
-
-	/**
 	 * 取得 PIO 函式庫物件
 	 *
 	 * @return IPIO PIO 函式庫物件

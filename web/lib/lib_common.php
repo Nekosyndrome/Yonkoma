@@ -9,6 +9,8 @@
  * @date $Date$
  */
  
+ use Yonkoma\Singleton;
+
 //TODO: fix this shit
 function transformTemplateArray($input)
 {
@@ -26,17 +28,16 @@ function transformTemplateArray($input)
 /* 輸出表頭 */
 function head(&$dat,$resno=0){
 	$PMS = PMCLibrary::getPMSInstance();
-	$twig = PMCLibrary::getTwig();
-	$template = $twig->loadTemplate('page.twig');
+	$twig = Singleton::getTwig('page.twig');
 
 	$pte_vals = array('{$TITLE}'=>TITLE,'{$RESTO}'=>$resno?$resno:'');
-	$dat .= $template->renderBlock('HEADER', transformTemplateArray($pte_vals));
+	$dat .= $twig->renderBlock('HEADER', transformTemplateArray($pte_vals));
 	$PMS->useModuleMethods('Head', array(&$dat,$resno)); // "Head" Hook Point
 	$pte_vals+=array('{$ALLOW_UPLOAD_EXT}' => ALLOW_UPLOAD_EXT,
 		'{$JS_REGIST_WITHOUTCOMMENT}' => str_replace('\'', '\\\'', _T('regist_withoutcomment')),
 		'{$JS_REGIST_UPLOAD_NOTSUPPORT}' => str_replace('\'', '\\\'', _T('regist_upload_notsupport')),
 	);
-	$dat .= $template->renderBlock('JSHEADER', transformTemplateArray($pte_vals));
+	$dat .= $twig->renderBlock('JSHEADER', transformTemplateArray($pte_vals));
 	$dat .= '</head>';
 	$pte_vals += array('{$TOP_LINKS}' => TOP_LINKS,
 		'{$HOME}' => '[<a href="'.HOME.'" target="_top">'._T('head_home').'</a>]',
@@ -46,15 +47,14 @@ function head(&$dat,$resno=0){
 		'{$SEARCH}' => (USE_SEARCH) ? '[<a href="'.PHP_SELF.'?mode=search">'._T('head_search').'</a>]' : '',
 		'{$HOOKLINKS}' => '');
 	$PMS->useModuleMethods('Toplink', array(&$pte_vals['{$HOOKLINKS}'],$resno)); // "Toplink" Hook Point
-	$dat .= $template->renderBlock('BODYHEAD', transformTemplateArray($pte_vals));
+	$dat .= $twig->renderBlock('BODYHEAD', transformTemplateArray($pte_vals));
 }
 
 /* 發表用表單輸出 */
 function form(&$dat, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail='', $sub='', $com='', $cat='', $mode='regist'){
 	global $ADDITION_INFO;
 	$PMS = PMCLibrary::getPMSInstance();
-	$twig = PMCLibrary::getTwig();
-	$template = $twig->loadTemplate('page.twig');
+	$twig = Singleton::getTwig('page.twig');
 
 	$pte_vals = array('{$SELF}'=>$retURL, '{$FORMTOP}'=>'', '{$MODE}'=>$mode);
 	$isedit = ($mode == 'edit'); // 是否為編輯模式
@@ -109,19 +109,18 @@ function form(&$dat, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail
 	$PMS->useModuleMethods('PostInfo', array(&$pte_vals['{$HOOKPOSTINFO}'])); // "PostInfo" Hook Point
 
 	if(USE_FLOATFORM && !$resno && $iscollapse) $pte_vals['{$FORMBOTTOM}'] = '<script type="text/javascript">hideform();</script>';
-	$dat .= $template->renderBlock('POSTFORM', transformTemplateArray($pte_vals));
+	$dat .= $twig->renderBlock('POSTFORM', transformTemplateArray($pte_vals));
 }
 
 /* 輸出頁尾文字 */
 function foot(&$dat){
 	$PMS = PMCLibrary::getPMSInstance();
-	$twig = PMCLibrary::getTwig();
-	$template = $twig->loadTemplate('page.twig');
+	$twig = Singleton::getTwig('page.twig');
 
 	$pte_vals = array('{$FOOTER}'=>'<!-- GazouBBS v3.0 --><!-- ふたば改0.8 --><!-- Pixmicat! -->');
 	$PMS->useModuleMethods('Foot', array(&$pte_vals['{$FOOTER}'])); // "Foot" Hook Point
 	$pte_vals['{$FOOTER}'] .= '<small>- <a rel="nofollow noreferrer license" href="http://php.s3.to" target="_blank">GazouBBS</a> + <a rel="nofollow noreferrer license" href="http://www.2chan.net/" target="_blank">futaba</a> + <a rel="nofollow noreferrer license" href="https://github.com/pixmicat/pixmicat" target="_blank">Pixmicat!</a> -</small>';
-	$dat .= $template->renderBlock('FOOTER', transformTemplateArray($pte_vals));
+	$dat .= $twig->renderBlock('FOOTER', transformTemplateArray($pte_vals));
 }
 
 /* 網址自動連結 */
@@ -147,14 +146,13 @@ function fullURL(){
 
 /* 輸出錯誤畫面 */
 function error($mes, $dest=''){
-	$twig = PMCLibrary::getTwig();
-	$template = $twig->loadTemplate('page.twig');
+	$twig = Singleton::getTwig('page.twig');
 
 	if(is_file($dest)) unlink($dest);
 	$pte_vals = array('{$SELF2}'=>PHP_SELF2.'?'.time(), '{$MESG}'=>$mes, '{$RETURN_TEXT}'=>_T('return'), '{$BACK_TEXT}'=>_T('error_back'));
 	$dat = '';
 	head($dat);
-	$dat .= $template->renderBlock('ERROR', transformTemplateArray($pte_vals));
+	$dat .= $twig->renderBlock('ERROR', transformTemplateArray($pte_vals));
 	foot($dat);
 	exit($dat);
 }

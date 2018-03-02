@@ -1,5 +1,5 @@
 <?php
-
+use Yonkoma\Singleton;
 class mod_ajax extends ModuleHelper{
 
 	protected $MAX_POSTS = 114514;
@@ -142,8 +142,7 @@ class mod_ajax extends ModuleHelper{
 		$PIO = PMCLibrary::getPIOInstance();
 		$FileIO = PMCLibrary::getFileIOInstance();
 		$PMS = PMCLibrary::getPMSInstance();
-		$twig = PMCLibrary::getTwig();
-		$template = $twig->loadTemplate('page.twig');
+		$twig = Singleton::getTwig('page.twig');
 		$tree = array_flip($tree);
 		extract($post);
 
@@ -216,7 +215,7 @@ class mod_ajax extends ModuleHelper{
 			);
 			if(isset($resno) && $resno) $arrLabels['{$RESTO}']=$resno;
 			$PMS->useModuleMethods('ThreadReply', array(&$arrLabels, $post, 1)); // "ThreadReply" Hook Point
-			return $template->renderBlock('REPLY', transformTemplateArray($arrLabels));
+			return $twig->renderBlock('REPLY', transformTemplateArray($arrLabels));
 		}
 		else // 首篇
 		{
@@ -240,7 +239,7 @@ class mod_ajax extends ModuleHelper{
 			);
 			if(isset($resno) && $resno) $arrLabels['{$RESTO}']=$resno;
 			$PMS->useModuleMethods('ThreadPost', array(&$arrLabels, $post, 0)); // "ThreadPost" Hook Point
-			return $template->renderBlock('THREAD', transformTemplateArray($arrLabels));
+			return $twig->renderBlock('THREAD', transformTemplateArray($arrLabels));
 		}
 	}
 

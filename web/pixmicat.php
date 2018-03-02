@@ -1,52 +1,14 @@
 <?php
 define("PIXMICAT_VER", 'Pixmicat!-PIO 8th.Release.4'); // 版本資訊文字
 define("PHP_SELF", basename(__FILE__)); // 主程式名
-/*
-Pixmicat! : 圖咪貓貼圖版程式
-http://pixmicat.openfoundry.org/
-版權所有 © 2005-2015 Pixmicat! Development Team
-
-版權聲明：
-此程式是基於レッツPHP!<http://php.s3.to/>的gazou.php、
-双葉ちゃん<http://www.2chan.net>的futaba.php所改寫之衍生著作程式，屬於自由軟體，
-以Artistic License 2.0作為發佈授權條款。
-您可以遵照Artistic License 2.0來自由使用、散播、修改或製成衍生著作。
-更詳細的條款及定義請參考隨附"LICENSE"條款副本。
-
-發佈這一程式的目的是希望它有用，但沒有任何擔保，甚至沒有適合特定目的而隱含的擔保。
-關於此程式相關的問題請不要詢問レッツPHP!及双葉ちゃん。
-
-如果您沒有隨著程式收到一份Artistic License 2.0副本，
-請瀏覽http://pixmicat.openfoundry.org/license/以取得一份。
-
-"Pixmicat!", "Pixmicat", 及"圖咪貓"是Pixmicat! Development Team的商標。
-
-最低運行需求：
-PHP 5.2.0 / 2 November 2006
-GD Version 2.0.28 / 21 July 2004
-
-建議運行環境：
-PHP 5.2.0 或更高版本並開啟 GD 和 Zlib 支援，如支援 ImageMagick 建議使用
-安裝 PHP 編譯快取套件 (如eAccelerator, XCache, APC) 或其他快取套件 (如memcached) 更佳
-如伺服器支援 SQLite, MySQL, PostgreSQL 等請盡量使用
-
-設置方法：
-根目錄的權限請設為777，
-首先將pixmicat.php執行過一遍，必要的檔案和資料夾權限皆會自動設定，
-自動設定完成後請刪除或註解起來此檔案底部之init(); // ←■■！程式環境初始化(略)一行，
-然後再執行一遍pixmicat.php，即完成初始化程序，可以開始使用。
-
-細部的設定請打開config.php參考註解修改，另有 Wiki (http://pixmicat.wikidot.com/pmcuse:config)
-說明條目可資參考。
-*/
 
 require './config.php'; // 引入設定檔
-//require '/home/komicolle/common/config.php';
 require ROOTPATH.'lib/pmclibrary.php'; // 引入函式庫
 require ROOTPATH.'lib/lib_errorhandler.php'; // 引入全域錯誤捕捉
 require ROOTPATH.'lib/lib_compatible.php'; // 引入相容函式庫
 require ROOTPATH.'lib/lib_common.php'; // 引入共通函式檔案
 require ROOTPATH.'lib/webm.php';
+use Yonkoma\Singleton;
 
 /* 更新記錄檔檔案／輸出討論串 */
 function updatelog($resno=0,$page_num=-1,$single_page=false){
@@ -54,8 +16,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
 	$PMS = PMCLibrary::getPMSInstance();
-	$twig = PMCLibrary::getTwig();
-	$template = $twig->loadTemplate('page.twig');
+	$twig = Singleton::getTwig('page.twig');
 
 	$adminMode = adminAuthenticate('check') && $page_num != -1 && !$single_page; // 前端管理模式
 	$adminFunc = ''; // 前端管理選擇
@@ -279,7 +240,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 		}
 		$pte_vals['{$PAGENAV}'] .= '<br style="clear: left;" />
 </div>';
-		$dat .= $template->renderBlock('MAIN', transformTemplateArray($pte_vals));
+		$dat .= $twig->renderBlock('MAIN', transformTemplateArray($pte_vals));
 		foot($dat);
 
 		// 存檔 / 輸出
@@ -315,8 +276,7 @@ function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_ki
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
 	$PMS = PMCLibrary::getPMSInstance();
-	$twig = PMCLibrary::getTwig();
-	$template = $twig->loadTemplate('page.twig');
+	$twig = Singleton::getTwig('page.twig');
 
 	$thdat = ''; // 討論串輸出碼
 	$posts_count = count($posts); // 迴圈次數
@@ -417,16 +377,16 @@ function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_ki
 			$arrLabels = array('{$NO}'=>$no, '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$CATEGORY}'=>$category, '{$QUOTEBTN}'=>$QUOTEBTN, '{$IMG_BAR}'=>$IMG_BAR, '{$IMG_SRC}'=>$imgsrc, '{$WARN_BEKILL}'=>$WARN_BEKILL, '{$NAME_TEXT}'=>_T('post_name'), '{$CATEGORY_TEXT}'=>_T('post_category'), '{$SELF}'=>PHP_SELF, '{$COM}'=>$com);
 			if($resno) $arrLabels['{$RESTO}']=$resno;
 			$PMS->useModuleMethods('ThreadReply', array(&$arrLabels, $posts[$i], $resno)); // "ThreadReply" Hook Point
-			$thdat .= $template->renderBlock('REPLY', transformTemplateArray($arrLabels));
+			$thdat .= $twig->renderBlock('REPLY', transformTemplateArray($arrLabels));
 		}else{ // 首篇
 			$arrLabels = array('{$NO}'=>$no, '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$CATEGORY}'=>$category, '{$QUOTEBTN}'=>$QUOTEBTN, '{$REPLYBTN}'=>$REPLYBTN, '{$IMG_BAR}'=>$IMG_BAR, '{$IMG_SRC}'=>$imgsrc, '{$WARN_OLD}'=>$WARN_OLD, '{$WARN_BEKILL}'=>$WARN_BEKILL, '{$WARN_ENDREPLY}'=>$WARN_ENDREPLY, '{$WARN_HIDEPOST}'=>$WARN_HIDEPOST, '{$NAME_TEXT}'=>_T('post_name'), '{$CATEGORY_TEXT}'=>_T('post_category'), '{$SELF}'=>PHP_SELF, '{$COM}'=>$com);
 			if($resno) $arrLabels['{$RESTO}']=$resno;
 			$PMS->useModuleMethods('ThreadPost', array(&$arrLabels, $posts[$i], $resno)); // "ThreadPost" Hook Point
-			$thdat .= $template->renderBlock('THREAD', transformTemplateArray($arrLabels));
+			$thdat .= $twig->renderBlock('THREAD', transformTemplateArray($arrLabels));
 		}
 	}
 	$data = $resno ? ['{$RESTO}'=>$resno] : [];
-	$thdat .= $template->renderBlock('THREADSEPARATE', transformTemplateArray($data));
+	$thdat .= $twig->renderBlock('THREADSEPARATE', transformTemplateArray($data));
 	$thdat .= '</div>';
 	return $thdat;
 }
@@ -1059,8 +1019,7 @@ function search(){
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
 	$PMS = PMCLibrary::getPMSInstance();
-	$twig = PMCLibrary::getTwig();
-	$template = $twig->loadTemplate('page.twig');
+	$twig = Singleton::getTwig('page.twig');
 
 	if(!USE_SEARCH) error(_T('search_disabled'));
 	$searchKeyword = isset($_POST['keyword']) ? trim($_POST['keyword']) : ''; // 欲搜尋的文字
@@ -1106,7 +1065,7 @@ function search(){
 				$category = implode(', ', $ary_category2);
 			}else $category = '';
 			$arrLabels = array('{$NO}'=>'<a href="'.PHP_SELF.'?res='.($resto?$resto.'#r'.$no:$no).'">'.$no.'</a>', '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$COM}'=>$com, '{$CATEGORY}'=>$category, '{$NAME_TEXT}'=>_T('post_name'), '{$CATEGORY_TEXT}'=>_T('post_category'));
-			$resultlist .= $template->renderBlock('SEARCHRESULT', transformTemplateArray($arrLabels));
+			$resultlist .= $twig->renderBlock('SEARCHRESULT', transformTemplateArray($arrLabels));
 		}
 		echo $resultlist ? $resultlist : '<div style="text-align: center">'._T('search_notfound').'<br/><a href="?mode=search">'._T('search_back').'</a></div>';
 		echo "</div>";
@@ -1211,8 +1170,7 @@ function showstatus(){
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
 	$PMS = PMCLibrary::getPMSInstance();
-	$twig = PMCLibrary::getTwig();
-	$template = $twig->loadTemplate('page.twig');
+	$twig = Singleton::getTwig('page.twig');
 
 	$countline = $PIO->postCount(); // 計算投稿文字記錄檔目前資料筆數
 	$counttree = $PIO->threadCount(); // 計算樹狀結構記錄檔目前資料筆數
@@ -1277,7 +1235,7 @@ function showstatus(){
 <tr><td>'._T('info_basic_showid').'</td><td colspan="3"> '.DISP_ID.' '._T('info_basic_showid_after').'</td></tr>
 <tr><td>'._T('info_basic_cr_limit').'</td><td colspan="3"> '.BR_CHECK._T('info_basic_cr_after').'</td></tr>
 <tr><td>'._T('info_basic_timezone').'</td><td colspan="3"> GMT '.TIME_ZONE.'</td></tr>
-<tr><td>'._T('info_basic_theme').'</td><td colspan="3"> '.$template->renderBlock('THEMENAME', []).' '.$template->renderBlock('THEMEVER', []).'<br/>by '.$template->renderBlock('THEMEAUTHOR', []).'</td></tr>
+<tr><td>'._T('info_basic_theme').'</td><td colspan="3"> '.$twig->renderBlock('THEMENAME', []).' '.$twig->renderBlock('THEMEVER', []).'<br/>by '.$twig->renderBlock('THEMEAUTHOR', []).'</td></tr>
 <tr><td style="text-align:center" colspan="4">'._T('info_dsusage_top').'</td></tr>
 <tr style="text-align:center"><td>'._T('info_basic_threadcount').'</td><td colspan="'.(isset($piosensorInfo)?'2':'3').'"> '.$counttree.' '._T('info_basic_threads').'</td>'.(isset($piosensorInfo)?'<td rowspan="2">'.$piosensorInfo.'</td>':'').'</tr>
 <tr style="text-align:center"><td>'._T('info_dsusage_count').'</td><td colspan="'.(isset($piosensorInfo)?'2':'3').'">'.$countline.'</td></tr>
