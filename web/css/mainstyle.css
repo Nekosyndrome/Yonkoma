@@ -43,7 +43,6 @@
 	.quote { margin: 0.9em 1em 1em 1.8em; display: block; word-break: break-all; } /* 討論串內文縮排樣式 */
 	.quote pre { display: block; max-height:450px; max-width:500px; overflow:auto; } /* code show */
 	.resquote { color: #789922; } /* 標註引用回文顏色 */
-	.category { font-size: 0.8em; color: gray; } /* 類別標籤顯示樣式 */
 	.backquote { font-size: 0.8em; margin-top: 1em; word-break: break-all; }
 	.backquote .qlink { display: inline-block; margin-left: 0.5em; }
 

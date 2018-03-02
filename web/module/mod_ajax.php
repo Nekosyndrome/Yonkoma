@@ -186,16 +186,6 @@ class mod_ajax extends ModuleHelper{
 
 		$QUOTEBTN = 'No.'. $no;
 
-		if(USE_CATEGORY){
-			$ary_category = explode(',', str_replace('&#44;', ',', $category)); $ary_category = array_map('trim', $ary_category);
-			$ary_category_count = count($ary_category);
-			$ary_category2 = array();
-			for($p = 0; $p < $ary_category_count; $p++){
-				if($c = $ary_category[$p]) $ary_category2[] = '<a href="'.PHP_SELF.'?mode=category&amp;c='.urlencode($c).'">'.$c.'</a>';
-			}
-			$category = implode(', ', $ary_category2);
-		}else $category = '';
-
 		if(!$isop) //回應
 		{ 
 			$arrLabels = array(
@@ -203,13 +193,11 @@ class mod_ajax extends ModuleHelper{
 				'{$SUB}'=>$sub,
 				'{$NAME}'=>$name,
 				'{$NOW}'=>$now,
-				'{$CATEGORY}'=>$category,
 				'{$QUOTEBTN}'=>$QUOTEBTN,
 				'{$IMG_BAR}'=>isset($IMG_BAR) ? $IMG_BAR : '',
 				'{$IMG_SRC}'=>isset($imgsrc) ? $imgsrc : '',
 				'{$WARN_BEKILL}'=>isset($WARN_BEKILL) ? $WARN_BEKILL : '',
 				'{$NAME_TEXT}'=>_T('post_name'),
-				'{$CATEGORY_TEXT}'=>_T('post_category'),
 				'{$SELF}'=>PHP_SELF,
 				'{$COM}'=>$com
 			);
@@ -224,7 +212,6 @@ class mod_ajax extends ModuleHelper{
 				'{$SUB}'=>$sub,
 				'{$NAME}'=>$name,
 				'{$NOW}'=>$now,
-				'{$CATEGORY}'=>$category,
 				'{$QUOTEBTN}'=>$QUOTEBTN,
 				'{$REPLYBTN}'=>isset($REPLYBTN) ? $REPLYBTN : '',
 				'{$IMG_BAR}'=>isset($IMG_BAR) ? $IMG_BAR : '',
@@ -234,7 +221,6 @@ class mod_ajax extends ModuleHelper{
 				'{$WARN_ENDREPLY}'=>isset($WARN_ENDREPLY) ? $WARN_ENDREPLY : '',
 				'{$WARN_HIDEPOST}'=>isset($WARN_HIDEPOST) ? $WARN_HIDEPOST : '',
 				'{$NAME_TEXT}'=>_T('post_name'),
-				'{$CATEGORY_TEXT}'=>_T('post_category'),
 				'{$SELF}'=>PHP_SELF, '{$COM}'=>$com
 			);
 			if(isset($resno) && $resno) $arrLabels['{$RESTO}']=$resno;

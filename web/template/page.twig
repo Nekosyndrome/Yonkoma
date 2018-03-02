@@ -84,9 +84,6 @@ var ext="{{ ALLOW_UPLOAD_EXT }}".toUpperCase().split("|");
 {% if FORM_ATTECHMENT_FIELD %}
     </td></tr>
 {% endif %}
-{% if FORM_CATEGORY_FIELD %}
-    <tr><td class="Form_bg"><b>{{ FORM_CATEGORY_TEXT }}</b></td><td>{{ FORM_CATEGORY_FIELD }}<small>{{ FORM_CATEGORY_NOTICE }}</small></td></tr>
-{% endif %}
 {% if NONE %}
     <tr><td class="Form_bg"><b>{{ FORM_DELETE_PASSWORD_TEXT }}</b></td><td>{{ FORM_DELETE_PASSWORD_FIELD }}<small>{{ FORM_DELETE_PASSWORD_NOTICE }}</small></td></tr>
 {% endif %}
@@ -141,9 +138,6 @@ var ext="{{ ALLOW_UPLOAD_EXT }}".toUpperCase().split("|");
 {{ IMG_SRC }}
 <div class="post-head"><input type="checkbox" name="{{ NO }}" value="delete" /><span class="title">{{ SUB }}</span><span class="name">{{ NAME }}</span><span class="now">{{ NOW }}</span><span class="qlink" data-no="{{ NO }}">{{ QUOTEBTN }}</span><span class="rlink">{{ REPLYBTN }}</span></div>
 <div class="quote">{{ COM }}</div>
-{% if CATEGORY %}
-    <div class="category">{{ CATEGORY_TEXT }}{{ CATEGORY }}</div>
-{% endif %}
 {{ WARN_OLD }}{{ WARN_BEKILL }}{{ WARN_ENDREPLY }}{{ WARN_HIDEPOST }}</div>
 {% endblock %}
 
@@ -156,9 +150,6 @@ var ext="{{ ALLOW_UPLOAD_EXT }}".toUpperCase().split("|");
 {% endif %}
 {{ IMG_SRC }}
 <div class="quote">{{ COM }}</div>
-{% if CATEGORY %}
-    <div class="category">{{ CATEGORY_TEXT }}{{ CATEGORY }}</div>
-{% endif %}
 {{ WARN_BEKILL }}</div>
 {% endblock %}
 
@@ -168,9 +159,6 @@ var ext="{{ ALLOW_UPLOAD_EXT }}".toUpperCase().split("|");
 <span class="title">{{ SUB }}</span>
 {{ NAME_TEXT }}<span class="name">{{ NAME }}</span> [{{ NOW }}] No.{{ NO }}
 <div class="quote">{{ COM }}</div>
-{% if CATEGORY %}
-    <div class="category">{{ CATEGORY_TEXT }}{{ CATEGORY }}</div>
-{% endif %}
 </div>
 <hr />
 {% endblock %}

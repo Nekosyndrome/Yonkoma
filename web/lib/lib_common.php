@@ -100,11 +100,6 @@ function form(&$dat, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail
 			'{$MAIN_PAGE}' => '11'
 		);
 	}
-	if(USE_CATEGORY) {
-		$pte_vals += array('{$FORM_CATEGORY_FIELD}' => '<input type="text" name="category" size="28" value="'.$cat.'" />',
-			'{$FORM_CATEGORY_TEXT}' => _T('form_category'),
-			'{$FORM_CATEGORY_NOTICE}' => _T('form_category_notice'));
-	}
 	if(STORAGE_LIMIT) $pte_vals['{$FORM_NOTICE_STORAGE_LIMIT}'] = _T('form_notice_storage_limit',total_size(),STORAGE_MAX);
 	$PMS->useModuleMethods('PostInfo', array(&$pte_vals['{$HOOKPOSTINFO}'])); // "PostInfo" Hook Point
 

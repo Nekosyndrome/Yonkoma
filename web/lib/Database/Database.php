@@ -149,7 +149,6 @@ interface Database
      * @param int $no        文章編號
      * @param int  $resto     回應編號
      * @param string  $md5chksum 附加圖MD5
-     * @param string  $category  類別
      * @param string  $tim       時間戳
      * @param string  $ext       附加圖副檔名
      * @param int  $imgw      附加圖寬
@@ -171,7 +170,6 @@ interface Database
         $no,
         $resto,
         $md5chksum,
-        $category,
         $tim,
         $ext,
         $imgw,
@@ -238,14 +236,6 @@ interface Database
      * @return array          文章內容陣列
      */
     public function searchPost($keyword, $field, $method);
-
-    /**
-     * 搜尋類別標籤
-     *
-     * @param  string $category 類別
-     * @return array           此類別之文章編號陣列
-     */
-    public function searchCategory($category);
 
     /**
      * 取得文章狀態

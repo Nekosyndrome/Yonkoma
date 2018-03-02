@@ -37,7 +37,7 @@ class Sqlite implements Database
             $err .= sprintf(PHP_EOL."Description: %s",
                 print_r($this->con->errorInfo(), true));
         }
-        throw new RuntimeException($err);
+        throw new \RuntimeException($err);
     }
 
     /* PIO模組版本 */
@@ -64,7 +64,6 @@ class Sqlite implements Database
 	"root" TIMESTAMP DEFAULT \'0\' NOT NULL,
 	"time" INTEGER  NOT NULL,
 	"md5chksum" VARCHAR(32)  NOT NULL,
-	"category" VARCHAR(255)  NOT NULL,
 	"tim" INTEGER  NOT NULL,
 	"ext" VARCHAR(4)  NOT NULL,
 	"imgw" INTEGER  NOT NULL,
@@ -87,7 +86,7 @@ class Sqlite implements Database
             }
             $result .= 'CREATE INDEX IDX_'.$this->tablename.'_resto_no ON '.$this->tablename.'(resto,no);';
             if ($isAddInitData) {
-                $result .= 'INSERT INTO '.$this->tablename.' (resto,root,time,md5chksum,category,tim,ext,imgw,imgh,imgsize,tw,th,pwd,now,name,email,sub,com,host,status) VALUES (0, datetime("now"), 1111111111, "", "", 1111111111111, "", 0, 0, "", 0, 0, "", "05/01/01(六)00:00", "'.$this->ENV['NONAME'].'", "", "'.$this->ENV['NOTITLE'].'", "'.$this->ENV['NOCOMMENT'].'", "", "");';
+                $result .= 'INSERT INTO '.$this->tablename.' (resto,root,time,md5chksum,tim,ext,imgw,imgh,imgsize,tw,th,pwd,now,name,email,sub,com,host,status) VALUES (0, datetime("now"), 1111111111, "", 1111111111111, "", 0, 0, "", 0, 0, "", "05/01/01(六)00:00", "'.$this->ENV['NONAME'].'", "", "'.$this->ENV['NOTITLE'].'", "'.$this->ENV['NOCOMMENT'].'", "", "");';
             }
             $this->con->exec($result);
             $this->dbCommit();
@@ -162,8 +161,8 @@ class Sqlite implements Database
         $data = explode("\r\n", $data);
         $data_count = count($data) - 1;
         $replaceComma = create_function('$txt', 'return str_replace("&#44;", ",", $txt);');
-        $SQL = 'INSERT INTO '.$this->tablename.' (no,resto,root,time,md5chksum,category,tim,ext,imgw,imgh,imgsize,tw,th,pwd,now,name,email,sub,com,host,status) VALUES '
-                .'(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $SQL = 'INSERT INTO '.$this->tablename.' (no,resto,root,time,md5chksum,tim,ext,imgw,imgh,imgsize,tw,th,pwd,now,name,email,sub,com,host,status) VALUES '
+                .'(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $PDOStmt = $this->con->prepare($SQL);
         for ($i = 0; $i < $data_count; $i++) {
             $line = array_map($replaceComma, explode(',', $data[$i])); // 取代 &#44; 為 ,
@@ -173,14 +172,14 @@ class Sqlite implements Database
             $PDOStmt->bindValue(3, $line[2], PDO::PARAM_STR);
             $PDOStmt->bindValue(4, $tim, PDO::PARAM_INT);
             $PDOStmt->bindValue(5, $line[3], PDO::PARAM_STR);
-            $PDOStmt->bindValue(6, $line[4], PDO::PARAM_STR);
-            $PDOStmt->bindValue(7, $line[5], PDO::PARAM_STR ); // 13-digit BIGINT workground //refix at 201406
-            $PDOStmt->bindValue(8, $line[6], PDO::PARAM_STR);
+            $PDOStmt->bindValue(6, $line[4], PDO::PARAM_STR ); // 13-digit BIGINT workground //refix at 201406
+            $PDOStmt->bindValue(7, $line[5], PDO::PARAM_STR);
+            $PDOStmt->bindValue(8, $line[6], PDO::PARAM_INT);
             $PDOStmt->bindValue(9, $line[7], PDO::PARAM_INT);
-            $PDOStmt->bindValue(10, $line[8], PDO::PARAM_INT);
-            $PDOStmt->bindValue(11, $line[9], PDO::PARAM_STR);
+            $PDOStmt->bindValue(10, $line[8], PDO::PARAM_STR);
+            $PDOStmt->bindValue(11, $line[9], PDO::PARAM_INT);
             $PDOStmt->bindValue(12, $line[10], PDO::PARAM_INT);
-            $PDOStmt->bindValue(13, $line[11], PDO::PARAM_INT);
+            $PDOStmt->bindValue(13, $line[11], PDO::PARAM_STR);
             $PDOStmt->bindValue(14, $line[12], PDO::PARAM_STR);
             $PDOStmt->bindValue(15, $line[13], PDO::PARAM_STR);
             $PDOStmt->bindValue(16, $line[14], PDO::PARAM_STR);
@@ -188,7 +187,6 @@ class Sqlite implements Database
             $PDOStmt->bindValue(18, $line[16], PDO::PARAM_STR);
             $PDOStmt->bindValue(19, $line[17], PDO::PARAM_STR);
             $PDOStmt->bindValue(20, $line[18], PDO::PARAM_STR);
-            $PDOStmt->bindValue(21, $line[19], PDO::PARAM_STR);
             $PDOStmt->execute() or $this->_error_handler('Insert a new post failed', __LINE__);
         }
         $this->dbCommit(); // 送交
@@ -201,7 +199,7 @@ class Sqlite implements Database
         if (!$this->prepared) {
             $this->dbPrepare();
         }
-        $line = $this->con->query('SELECT no,resto,root,md5chksum,category,tim,ext,imgw,imgh,imgsize,tw,th,pwd,now,name,email,sub,com,host,status FROM '.$this->tablename.' ORDER BY no DESC');
+        $line = $this->con->query('SELECT no,resto,root,md5chksum,tim,ext,imgw,imgh,imgsize,tw,th,pwd,now,name,email,sub,com,host,status FROM '.$this->tablename.' ORDER BY no DESC');
         $data = '';
         $replaceComma = create_function('$txt', 'return str_replace(",", "&#44;", $txt);');
         while ($row = $line->fetch(PDO::FETCH_ASSOC)) {
@@ -408,7 +406,7 @@ class Sqlite implements Database
     }
 
     /* 新增文章/討論串 */
-    public function addPost($no, $resto, $md5chksum, $category, $tim, $ext, $imgw, $imgh, $imgsize, $tw, $th, $pwd, $now, $name, $email, $sub, $com, $host, $age = false, $status = '')
+    public function addPost($no, $resto, $md5chksum, $tim, $ext, $imgw, $imgh, $imgsize, $tw, $th, $pwd, $now, $name, $email, $sub, $com, $host, $age = false, $status = '')
     {
         if (!$this->prepared) {
             $this->dbPrepare();
@@ -426,29 +424,28 @@ class Sqlite implements Database
             $root = $updatetime; // 新增討論串, 討論串最後被更新時間
         }
 
-        $SQL = 'INSERT INTO '.$this->tablename.' (resto,root,time,md5chksum,category,tim,ext,imgw,imgh,imgsize,tw,th,pwd,now,name,email,sub,com,host,status) VALUES '
-                .'(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $SQL = 'INSERT INTO '.$this->tablename.' (resto,root,time,md5chksum,tim,ext,imgw,imgh,imgsize,tw,th,pwd,now,name,email,sub,com,host,status) VALUES '
+                .'(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $PDOStmt = $this->con->prepare($SQL);
         $PDOStmt->bindValue(1, $resto, PDO::PARAM_INT);
         $PDOStmt->bindValue(2, $root, PDO::PARAM_STR);
         $PDOStmt->bindValue(3, $time, PDO::PARAM_INT);
         $PDOStmt->bindValue(4, $md5chksum, PDO::PARAM_STR);
-        $PDOStmt->bindValue(5, $category, PDO::PARAM_STR);
-        $PDOStmt->bindValue(6, $tim, PDO::PARAM_STR); // 13-digit BIGINT workground//refix at 201406
-        $PDOStmt->bindValue(7, $ext, PDO::PARAM_STR);
-        $PDOStmt->bindValue(8, $imgw, PDO::PARAM_INT);
-        $PDOStmt->bindValue(9, $imgh, PDO::PARAM_INT);
-        $PDOStmt->bindValue(10, $imgsize, PDO::PARAM_STR);
-        $PDOStmt->bindValue(11, $tw, PDO::PARAM_INT);
-        $PDOStmt->bindValue(12, $th, PDO::PARAM_INT);
-        $PDOStmt->bindValue(13, $pwd, PDO::PARAM_STR);
-        $PDOStmt->bindValue(14, $now, PDO::PARAM_STR);
-        $PDOStmt->bindValue(15, $name, PDO::PARAM_STR);
-        $PDOStmt->bindValue(16, $email, PDO::PARAM_STR);
-        $PDOStmt->bindValue(17, $sub, PDO::PARAM_STR);
-        $PDOStmt->bindValue(18, $com, PDO::PARAM_STR);
-        $PDOStmt->bindValue(19, $host, PDO::PARAM_STR);
-        $PDOStmt->bindValue(20, $status, PDO::PARAM_STR);
+        $PDOStmt->bindValue(5, $tim, PDO::PARAM_STR); // 13-digit BIGINT workground//refix at 201406
+        $PDOStmt->bindValue(6, $ext, PDO::PARAM_STR);
+        $PDOStmt->bindValue(7, $imgw, PDO::PARAM_INT);
+        $PDOStmt->bindValue(8, $imgh, PDO::PARAM_INT);
+        $PDOStmt->bindValue(9, $imgsize, PDO::PARAM_STR);
+        $PDOStmt->bindValue(10, $tw, PDO::PARAM_INT);
+        $PDOStmt->bindValue(11, $th, PDO::PARAM_INT);
+        $PDOStmt->bindValue(12, $pwd, PDO::PARAM_STR);
+        $PDOStmt->bindValue(13, $now, PDO::PARAM_STR);
+        $PDOStmt->bindValue(14, $name, PDO::PARAM_STR);
+        $PDOStmt->bindValue(15, $email, PDO::PARAM_STR);
+        $PDOStmt->bindValue(16, $sub, PDO::PARAM_STR);
+        $PDOStmt->bindValue(17, $com, PDO::PARAM_STR);
+        $PDOStmt->bindValue(18, $host, PDO::PARAM_STR);
+        $PDOStmt->bindValue(19, $status, PDO::PARAM_STR);
         $PDOStmt->execute() or $this->_error_handler('Insert a new post failed', __LINE__);
     }
 
@@ -537,18 +534,6 @@ class Sqlite implements Database
         return $line->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /* 搜尋類別標籤 */
-    public function searchCategory($category)
-    {
-        if (!$this->prepared) {
-            $this->dbPrepare();
-        }
-
-        $result = $this->con->prepare('SELECT no FROM '.$this->tablename.' WHERE lower(category) LIKE :category ORDER BY no DESC');
-        $result->execute(array(':category' => '%,'.strtolower($category).',%'));
-        return $result->fetchAll(PDO::FETCH_COLUMN, 0);
-    }
-
     /* 取得文章屬性 */
     public function getPostStatus($status)
     {
@@ -563,7 +548,7 @@ class Sqlite implements Database
         }
 
         $no = intval($no);
-        $chk = array('resto', 'md5chksum', 'category', 'tim', 'ext', 'imgw', 'imgh', 'imgsize', 'tw', 'th', 'pwd', 'now', 'name', 'email', 'sub', 'com', 'host', 'status');
+        $chk = array('resto', 'md5chksum', 'tim', 'ext', 'imgw', 'imgh', 'imgsize', 'tw', 'th', 'pwd', 'now', 'name', 'email', 'sub', 'com', 'host', 'status');
         foreach ($chk as $c) {
             if (isset($newValues[$c])) {
                 if (!$this->con->exec('UPDATE '.$this->tablename." SET $c = ".$this->con->quote($newValues[$c]).' WHERE no = '.$no)) {

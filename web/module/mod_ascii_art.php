@@ -40,7 +40,7 @@ class mod_ascii_art extends ModuleHelper {
 	}
 
 	// 發文儲存前即進行轉換 (硬轉換)
-	public function autoHookRegistBeforeCommit(&$name, &$email, &$sub, &$com, &$category, &$age, $dest, $isReply, $imgWH, &$status){
+	public function autoHookRegistBeforeCommit(&$name, &$email, &$sub, &$com, &$age, $dest, $isReply, $imgWH, &$status){
 		if(!$this->HARD_TRANSLATE) return; // 選擇不作硬轉換
 		if(strpos($com, '[/aa]') !== false){
 			$com = preg_replace('/\[aa(?:=(\S*?))?](?:<br \/>)?(.*?)(?:<br \/>)?\[\/aa\]/us',

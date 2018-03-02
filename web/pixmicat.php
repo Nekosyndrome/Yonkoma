@@ -361,25 +361,15 @@ function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_ki
 			if($flgh->exists('TS')) $WARN_ENDREPLY = '<span class="warn_txt">'._T('warn_locked').'</span><br />'."\n"; // 被標記為禁止回應
 			if($hiddenReply) $WARN_HIDEPOST = '<span class="warn_txt2">'._T('notice_omitted',$hiddenReply).'</span><br />'."\n"; // 有隱藏的回應
 		}
-		// 對類別標籤作自動連結
-		if(USE_CATEGORY){
-			$ary_category = explode(',', str_replace('&#44;', ',', $category)); $ary_category = array_map('trim', $ary_category);
-			$ary_category_count = count($ary_category);
-			$ary_category2 = array();
-			for($p = 0; $p < $ary_category_count; $p++){
-				if($c = $ary_category[$p]) $ary_category2[] = '<a href="'.PHP_SELF.'?mode=category&amp;c='.urlencode($c).'">'.$c.'</a>';
-			}
-			$category = implode(', ', $ary_category2);
-		}else $category = '';
 
 		// 最終輸出處
 		if($i){ // 回應
-			$arrLabels = array('{$NO}'=>$no, '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$CATEGORY}'=>$category, '{$QUOTEBTN}'=>$QUOTEBTN, '{$IMG_BAR}'=>$IMG_BAR, '{$IMG_SRC}'=>$imgsrc, '{$WARN_BEKILL}'=>$WARN_BEKILL, '{$NAME_TEXT}'=>_T('post_name'), '{$CATEGORY_TEXT}'=>_T('post_category'), '{$SELF}'=>PHP_SELF, '{$COM}'=>$com);
+			$arrLabels = array('{$NO}'=>$no, '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$QUOTEBTN}'=>$QUOTEBTN, '{$IMG_BAR}'=>$IMG_BAR, '{$IMG_SRC}'=>$imgsrc, '{$WARN_BEKILL}'=>$WARN_BEKILL, '{$NAME_TEXT}'=>_T('post_name'), '{$SELF}'=>PHP_SELF, '{$COM}'=>$com);
 			if($resno) $arrLabels['{$RESTO}']=$resno;
 			$PMS->useModuleMethods('ThreadReply', array(&$arrLabels, $posts[$i], $resno)); // "ThreadReply" Hook Point
 			$thdat .= $twig->renderBlock('REPLY', transformTemplateArray($arrLabels));
 		}else{ // 首篇
-			$arrLabels = array('{$NO}'=>$no, '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$CATEGORY}'=>$category, '{$QUOTEBTN}'=>$QUOTEBTN, '{$REPLYBTN}'=>$REPLYBTN, '{$IMG_BAR}'=>$IMG_BAR, '{$IMG_SRC}'=>$imgsrc, '{$WARN_OLD}'=>$WARN_OLD, '{$WARN_BEKILL}'=>$WARN_BEKILL, '{$WARN_ENDREPLY}'=>$WARN_ENDREPLY, '{$WARN_HIDEPOST}'=>$WARN_HIDEPOST, '{$NAME_TEXT}'=>_T('post_name'), '{$CATEGORY_TEXT}'=>_T('post_category'), '{$SELF}'=>PHP_SELF, '{$COM}'=>$com);
+			$arrLabels = array('{$NO}'=>$no, '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$QUOTEBTN}'=>$QUOTEBTN, '{$REPLYBTN}'=>$REPLYBTN, '{$IMG_BAR}'=>$IMG_BAR, '{$IMG_SRC}'=>$imgsrc, '{$WARN_OLD}'=>$WARN_OLD, '{$WARN_BEKILL}'=>$WARN_BEKILL, '{$WARN_ENDREPLY}'=>$WARN_ENDREPLY, '{$WARN_HIDEPOST}'=>$WARN_HIDEPOST, '{$NAME_TEXT}'=>_T('post_name'), '{$SELF}'=>PHP_SELF, '{$COM}'=>$com);
 			if($resno) $arrLabels['{$RESTO}']=$resno;
 			$PMS->useModuleMethods('ThreadPost', array(&$arrLabels, $posts[$i], $resno)); // "ThreadPost" Hook Point
 			$thdat .= $twig->renderBlock('THREAD', transformTemplateArray($arrLabels));
@@ -415,7 +405,6 @@ function regist(){
 	$sub = isset($_POST[FT_SUBJECT]) ? CleanStr($_POST[FT_SUBJECT]) : '';
 	$com = isset($_POST[FT_COMMENT]) ? $_POST[FT_COMMENT] : '';
 	$pwd = isset($_POST['pwd']) ? $_POST['pwd'] : '';
-	$category = isset($_POST['category']) ? CleanStr($_POST['category']) : '';
 	$resto = isset($_POST['resto']) ? intval($_POST['resto']) : 0;
 	$upfile = isset($_FILES['upfile']['tmp_name']) ? $_FILES['upfile']['tmp_name'] : '';
 	$upfile_path = isset($_POST['upfile_path']) ? $_POST['upfile_path'] : '';
@@ -595,10 +584,6 @@ function regist(){
 	if(!$sub || preg_match("/^[ |　|]*$/", $sub)) $sub = DEFAULT_NOTITLE;
 	if(!$com || preg_match("/^[ |　|\t]*$/", $com)) $com = DEFAULT_NOCOMMENT;
 	// 修整標籤樣式
-	if($category && USE_CATEGORY){
-		$category = explode(',', $category); // 把標籤拆成陣列
-		$category = ','.implode(',', array_map('trim', $category)).','; // 去空白再合併為單一字串 (左右含,便可以直接以,XX,形式搜尋)
-	}else{ $category = ''; }
 	if($up_incomplete) $com .= '<br /><br /><span class="warn_txt">'._T('notice_incompletefile').'</span>'; // 上傳附加圖檔不完全的提示
 
 	// 密碼和時間的樣式
@@ -673,11 +658,12 @@ function regist(){
 			if(!MAX_AGE_TIME || (($time - $chktime) < (MAX_AGE_TIME * 60 * 60))) $age = true; // 討論串並無過期，推文
 		}
 	}
-	$PMS->useModuleMethods('RegistBeforeCommit', array(&$name, &$email, &$sub, &$com, &$category, &$age, $dest, $resto, array($W, $H, $imgW, $imgH), &$status)); // "RegistBeforeCommit" Hook Point
+	$PMS->useModuleMethods('RegistBeforeCommit', array(&$name, &$email, &$sub, &$com, &$age, $dest, $resto, array($W, $H, $imgW, $imgH), &$status)); // "RegistBeforeCommit" Hook Point
 
 	// 正式寫入儲存
-	$PIO->addPost($no,$resto,$md5chksum,$category,$tim,$ext,$imgW,$imgH,$imgsize,$W,$H,$pass,$now,$name,$email,$sub,$com,$host,$age,$status);
+	$PIO->addPost($no,$resto,$md5chksum,$tim,$ext,$imgW,$imgH,$imgsize,$W,$H,$pass,$now,$name,$email,$sub,$com,$host,$age,$status);
 	$PIO->dbCommit();
+	// TODO: Issue: sync problem
 	$lastno = $PIO->getLastPostNo('afterCommit'); // 取得此新文章編號
 	$PMS->useModuleMethods('RegistAfterCommit', array($lastno, $resto, $name, $email, $sub, $com)); // "RegistAfterCommit" Hook Point
 
@@ -1055,75 +1041,13 @@ function search(){
 		$resultlist = '';
 		foreach($hitPosts as $post){
 			extract($post);
-			if(USE_CATEGORY){
-				$ary_category = explode(',', str_replace('&#44;', ',', $category)); $ary_category = array_map('trim', $ary_category);
-				$ary_category_count = count($ary_category);
-				$ary_category2 = array();
-				for($p = 0; $p < $ary_category_count; $p++){
-					if($c = $ary_category[$p]) $ary_category2[] = '<a href="'.PHP_SELF.'?mode=category&amp;c='.urlencode($c).'">'.$c.'</a>';
-				}
-				$category = implode(', ', $ary_category2);
-			}else $category = '';
-			$arrLabels = array('{$NO}'=>'<a href="'.PHP_SELF.'?res='.($resto?$resto.'#r'.$no:$no).'">'.$no.'</a>', '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$COM}'=>$com, '{$CATEGORY}'=>$category, '{$NAME_TEXT}'=>_T('post_name'), '{$CATEGORY_TEXT}'=>_T('post_category'));
+			$arrLabels = array('{$NO}'=>'<a href="'.PHP_SELF.'?res='.($resto?$resto.'#r'.$no:$no).'">'.$no.'</a>', '{$SUB}'=>$sub, '{$NAME}'=>$name, '{$NOW}'=>$now, '{$COM}'=>$com, '{$NAME_TEXT}'=>_T('post_name'));
 			$resultlist .= $twig->renderBlock('SEARCHRESULT', transformTemplateArray($arrLabels));
 		}
 		echo $resultlist ? $resultlist : '<div style="text-align: center">'._T('search_notfound').'<br/><a href="?mode=search">'._T('search_back').'</a></div>';
 		echo "</div>";
 	}
 	echo "</body>\n</html>";
-}
-
-/* 利用類別標籤搜尋符合的文章 */
-function searchCategory(){
-	$PIO = PMCLibrary::getPIOInstance();
-	$FileIO = PMCLibrary::getFileIOInstance();
-	$PMS = PMCLibrary::getPMSInstance();
-
-	$category = isset($_GET['c']) ? strtolower(strip_tags(trim($_GET['c']))) : ''; // 搜尋之類別標籤
-	if(!$category) error(_T('category_nokeyword'));
-	$category_enc = urlencode($category); $category_md5 = md5($category);
-	$page = isset($_GET['p']) ? @intval($_GET['p']) : 1; if($page < 1) $page = 1; // 目前瀏覽頁數
-	$isrecache = isset($_GET['recache']); // 是否強制重新生成快取
-
-	// 利用Session快取類別標籤出現篇別以減少負擔
-	session_start(); // 啟動Session
-	if(!isset($_SESSION['loglist_'.$category_md5]) || $isrecache){
-		$loglist = $PIO->searchCategory($category);
-		$_SESSION['loglist_'.$category_md5] = serialize($loglist);
-	}else $loglist = unserialize($_SESSION['loglist_'.$category_md5]);
-
-	$loglist_count = count($loglist);
-	$page_max = ceil($loglist_count / PAGE_DEF); if($page > $page_max) $page = $page_max; // 總頁數
-
-	// 分割陣列取出適當範圍作分頁之用
-	$loglist_cut = array_slice($loglist, PAGE_DEF * ($page - 1), PAGE_DEF); // 取出特定範圍文章
-	$loglist_cut_count = count($loglist_cut);
-
-	$dat = '';
-	head($dat);
-	$links = '[<a href="'.PHP_SELF2.'?'.time().'">'._T('return').'</a>][<a href="'.PHP_SELF.'?mode=category&amp;c='.$category_enc.'&amp;recache=1">'._T('category_recache').'</a>]';
-	$PMS->useModuleMethods('LinksAboveBar', array(&$links,'category'));
-	$dat .= "<div>$links</div>\n";
-	for($i = 0; $i < $loglist_cut_count; $i++){
-		$posts = $PIO->fetchPosts($loglist_cut[$i]); // 取得文章內容
-		$dat .= arrangeThread(($posts[0]['resto'] ? $posts[0]['resto'] : $posts[0]['no']), null, $posts, 0, $loglist_cut[$i], array(), array(), false, false, false); // 逐個輸出 (引用連結不顯示)
-	}
-
-	$dat .= '<table style="border: 1px solid gray"><tr>';
-	if($page > 1) $dat .= '<td><form action="'.PHP_SELF.'?mode=category&amp;c='.$category_enc.'&amp;p='.($page - 1).'" method="post"><div><input type="submit" value="'._T('prev_page').'" /></div></form></td>';
-	else $dat .= '<td style="white-space: nowrap;">'._T('first_page').'</td>';
-	$dat .= '<td>';
-	for($i = 1; $i <= $page_max ; $i++){
-		if($i==$page) $dat .= "[<b>".$i."</b>] ";
-		else $dat .= '[<a href="'.PHP_SELF.'?mode=category&amp;c='.$category_enc.'&amp;p='.$i.'">'.$i.'</a>] ';
-	}
-	$dat .= '</td>';
-	if($page < $page_max) $dat .= '<td><form action="'.PHP_SELF.'?mode=category&amp;c='.$category_enc.'&amp;p='.($page + 1).'" method="post"><div><input type="submit" value="'._T('next_page').'" /></div></form></td>';
-	else $dat .= '<td style="white-space: nowrap;">'._T('last_page').'</td>';
-	$dat .= '</tr></table>'."\n";
-
-	foot($dat);
-	echo $dat;
 }
 
 /* 顯示已載入模組資訊 */
@@ -1166,7 +1090,7 @@ function deleteCache($no){
 
 /* 顯示系統各項資訊 */
 function showstatus(){
-	global $LIMIT_SENSOR, $THUMB_SETTING;
+	global $LIMIT_SENSOR, $THUMB_SETTING, $config;
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
 	$PMS = PMCLibrary::getPMSInstance();
@@ -1220,7 +1144,7 @@ function showstatus(){
 </thead>
 <tbody>
 <tr><td style="width: 240px;">'._T('info_basic_ver').'</td><td colspan="3"> '.PIXMICAT_VER.' </td></tr>
-<tr><td>'._T('info_basic_pio').'</td><td colspan="3"> '.PIXMICAT_BACKEND.' : '.$PIO->pioVersion().'</td></tr>
+<tr><td>'._T('info_basic_pio').'</td><td colspan="3"> '.$config['db']['type'].' : '.$PIO->pioVersion().'</td></tr>
 <tr><td>'._T('info_basic_threadsperpage').'</td><td colspan="3"> '.PAGE_DEF.' '._T('info_basic_threads').'</td></tr>
 <tr><td>'._T('info_basic_postsperpage').'</td><td colspan="3"> '.RE_DEF.' '._T('info_basic_posts').'</td></tr>
 <tr><td>'._T('info_basic_postsinthread').'</td><td colspan="3"> '.RE_PAGE_DEF.' '._T('info_basic_posts').' '._T('info_basic_posts_showall').'</td></tr>
@@ -1283,6 +1207,7 @@ switch($mode){
 			case 'check':
 			case 'repair':
 			case 'export':
+				$PIO = PMCLibrary::getPIOInstance();
 				if(!$PIO->dbMaintanence($admin)) echo _T('action_main_notsupport');
 				else echo _T('action_main_'.$admin).(($mret = $PIO->dbMaintanence($admin,true))?_T('action_main_success'):_T('action_main_failed')).(is_bool($mret)?'':'<br/>'.$mret);
 				die("</div></form></body>\n</html>");
@@ -1295,9 +1220,6 @@ switch($mode){
 		break;
 	case 'status':
 		showstatus();
-		break;
-	case 'category':
-		searchCategory();
 		break;
 	case 'module':
 		$PMS = PMCLibrary::getPMSInstance();
