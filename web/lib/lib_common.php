@@ -185,15 +185,6 @@ function str_prefix($str, $maxlen=20) {
 	return mb_substr($str, 0, $maxlen, "UTF-8"). $suffix;
 }
 
-/* 檢查瀏覽器和伺服器是否支援gzip壓縮方式 */
-function CheckSupportGZip(){
-	$HTTP_ACCEPT_ENCODING = isset($_SERVER['HTTP_ACCEPT_ENCODING']) ? $_SERVER['HTTP_ACCEPT_ENCODING'] : '';
-	if(headers_sent() || connection_aborted()) return 0; // 已送出資料，取消
-	if(!(function_exists('gzencode') && function_exists('ob_start') && function_exists('ob_get_clean'))) return 0; // 伺服器相關的套件或函式無法使用，取消
-	if(strpos($HTTP_ACCEPT_ENCODING, 'gzip')!==false) return 'gzip';
-	return 0;
-}
-
 /* 封鎖 IP / Hostname / DNSBL 綜合性檢查 */
 function BanIPHostDNSBLCheck($IP, $HOST, &$baninfo){
 	if(!BAN_CHECK) return false; // Disabled

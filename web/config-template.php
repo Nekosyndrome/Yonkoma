@@ -152,7 +152,6 @@ define("COMM_MAX", 2000); // 內文接受字數 (UTF-8)
 define("INPUT_MAX", 100); // 除了內文外其他欄位的字數上限
 define("BR_CHECK", 0); // 文字換行行數上限 (不限：0)
 define("STATIC_HTML_UNTIL", 10); // 更新文章時自動生成的靜態網頁至第幾頁止 (全部生成：-1 僅入口頁：0)
-define("GZIP_COMPRESS_LEVEL", 3); // PHP動態輸出頁面使用Gzip壓縮層級 (關閉：0 啟動：1～9，推薦值：3)
 define("DEFAULT_NOTITLE", '無標題'); // 預設文章標題
 define("DEFAULT_NONAME", '無名氏'); // 預設文章名稱
 define("DEFAULT_NOCOMMENT", '無內文'); // 預設文章內文

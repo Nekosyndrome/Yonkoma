@@ -1263,7 +1263,6 @@ function showstatus(){
 }
 
 /*-----------程式各項功能主要判斷-------------*/
-if(GZIP_COMPRESS_LEVEL && ($Encoding = CheckSupportGZip())){ ob_start(); ob_implicit_flush(0); } // 支援且開啟Gzip壓縮就設緩衝區
 $mode = isset($_GET['mode']) ? $_GET['mode'] : (isset($_POST['mode']) ? $_POST['mode'] : ''); // 目前執行模式 (GET, POST)
 
 switch($mode){
@@ -1332,10 +1331,4 @@ switch($mode){
 			header('Location: '.fullURL().PHP_SELF2.'?'.time());
 		}
 }
-if(GZIP_COMPRESS_LEVEL && $Encoding){ // 有啟動Gzip
-	if(!ob_get_length()) exit; // 沒內容不必壓縮
-	header('Content-Encoding: '.$Encoding);
-	header('X-Content-Encoding-Level: '.GZIP_COMPRESS_LEVEL);
-	header('Vary: Accept-Encoding');
-	print gzencode(ob_get_clean(), GZIP_COMPRESS_LEVEL); // 壓縮內容
-}
+
