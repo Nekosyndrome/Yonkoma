@@ -28,7 +28,7 @@ server {
 server {
     listen 80;
     # server_name sample.board.com;
-    # root /var/www/sample_board/;
+    root /var/www/html/;
     index index.htm index.html index.php;
     # access_log /var/log/nginx/yonkoma.log;
     # include cloudflare;
