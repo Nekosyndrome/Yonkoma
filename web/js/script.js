@@ -1000,6 +1000,39 @@ function hideform() {
 			_expandThread(no);
 		});
 	}
+
+	function pageChangeDialog() {
+		function modifyURLParam(key, val, phpSelf) {
+			var url = location.protocol + '//' + location.host + location.pathname;
+			var params = document.location.search;
+			var suffix =  key + '=' + val;
+			var regex = new RegExp('([\?&])' + key + '[^&]*');
+
+			if (!params) {
+				suffix = '?' + suffix;
+			} else if (params && params.match(regex)!==null) {
+				suffix = params.replace(regex, "$1" + suffix);
+			} else {
+				suffix = params + '&' + suffix;
+			}
+			window.location.href = phpSelf + suffix;
+		}
+
+		$('.button-pagechange').click(function() {
+			var maxPage = $(this).attr('data-maxpage');
+			var jump = parseInt(prompt('Jump to page: (0-' + maxPage + ')', 0));
+			var staticUntil = parseInt($(this).attr('data-staticuntil'));
+			var phpSelf = $(this).attr('data-phpself');
+
+
+			if (jump <= staticUntil) {
+				nextUrl = jump==0 ? 'index.htm' : jump+'.htm';
+				window.location.href = nextUrl;
+			} else {
+				modifyURLParam('page_num', jump, phpSelf);
+			}
+		});
+	}
 	
 	/*
 	 * onPostLoaded: 加按鈕、加功能...
@@ -1046,6 +1079,7 @@ function hideform() {
 		var st = new Date();
 		
 		quickreplyFormInit();
+		pageChangeDialog();
 		
 		$('body').append('<div class="popup_area"></div>');
 		popupView = new UI.PopupView($('body')[0])
