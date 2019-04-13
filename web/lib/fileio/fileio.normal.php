@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FileIO Normal 本機儲存 API (With IFS 索引快取)
+ * FileIO Normal 本機儲存 API
  *
  * 以本機硬碟空間作為圖檔儲存的方式，並提供一套方法供程式管理圖片
  *
@@ -12,18 +12,21 @@
 
 use Yonkoma\Helper;
 
-class FileIOnormal extends AbstractIfsFileIO {
+class FileIOnormal extends AbstractFileIO {
     var $imgPath, $thumbPath;
 
     public function __construct($parameter, $ENV) {
         parent::__construct($parameter, $ENV);
-
         $this->imgPath = $ENV['IMG'];
         $this->thumbPath = $ENV['THUMB'];
     }
 
     public function init() {
         return true;
+    }
+
+    public function imageExists($board, $imgname) {
+        return file_exists($this->getImagePhysicalPath($board, $imgname));
     }
 
     public function deleteImage($board, $imgname) {
@@ -40,9 +43,7 @@ class FileIOnormal extends AbstractIfsFileIO {
                 if ($this->imageExists($board, $i)) {
                     continue; // 無法刪除，檔案存在 (保留索引)
                 }
-                // 無法刪除，檔案消失 (更新索引)
             }
-            $this->IFS->delRecord($i);
             $size += $size_perimg;
         }
         return $size;
@@ -58,14 +59,44 @@ class FileIOnormal extends AbstractIfsFileIO {
             (strpos($imgname, 's.') !== false ? $this->thumbPath : $this->imgPath),
             $imgname
         );
-//        return (strpos($imgname, 's.') !== false ? $this->thumbPath : $this->imgPath) . $imgname;
     }
 
     public function uploadImage($board, $imgname, $imgpath, $imgsize) {
-        $this->IFS->addRecord($board, $imgname, $imgsize, ''); // 加入索引之中
+        return false;
+    }
+
+    public function getImageFilesize($board, $imgname) {
+        $size = filesize($this->getImagePhysicalPath($board, $imgname));
+        if ($size === false) {
+            $size = 0;
+        }
+        return $size;
     }
 
     public function getImageURL($board, $imgname) {
         return $this->getImageLocalURL($board, $imgname);
+    }
+
+    public function resolveThumbName($board, $thumbPattern) {
+        $shortcut = $this->resolveThumbNameShortcut($board, $thumbPattern);
+        if ($shortcut !== false) {
+            return $shortcut;
+        }
+        $find = glob($this->thumbPath . $thumbPattern . 's.*');
+        return ($find !== false && count($find) != 0) ? basename($find[0]) : false;
+    }
+    /**
+     * 用傳統的 1234567890123s.jpg 規則嘗試尋找預覽圖，運氣好的話只需要找一次。
+     *
+     * @param string $thumbPattern 預覽圖檔名
+     * @return bool 是否找到
+     */
+    private function resolveThumbNameShortcut($board, $thumbPattern) {
+        $shortcutFind = $this->getImagePhysicalPath($board, $thumbPattern . 's.jpg');
+        if (file_exists($shortcutFind)) {
+            return basename($shortcutFind);
+        } else {
+            return false;
+        }
     }
 }

@@ -101,7 +101,6 @@ function form(&$dat, $board, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='
 			'{$MAIN_PAGE}' => '11'
 		);
 	}
-	if(STORAGE_LIMIT) $pte_vals['{$FORM_NOTICE_STORAGE_LIMIT}'] = _T('form_notice_storage_limit',total_size(),STORAGE_MAX);
 	$PMS->useModuleMethods('PostInfo', array(&$pte_vals['{$HOOKPOSTINFO}'])); // "PostInfo" Hook Point
 
 	$dat .= $twig->renderBlock('POSTFORM', transformTemplateArray($pte_vals));

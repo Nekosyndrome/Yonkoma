@@ -40,7 +40,6 @@ ini_set("memory_limit", '128M'); // PHP運行的最大記憶體使用量 (php內
 
 // FileIO設定
 define("FILEIO_BACKEND", 'normal'); // FileIO後端指定 (local, normal, ftp)
-define("FILEIO_INDEXLOG", 'fileioindex.dat'); // FileIO索引記錄檔 (儲存在本機端)
 define("FILEIO_PARAMETER", ''); // FileIO參數 (本機端儲存)
 //define("FILEIO_PARAMETER", serialize(array('ftp.example.com', 21, 'demo', 'demo', 'PASV', '/pwd/', 'http://www.example.com/~demo/pwd/', true))); // FileIO參數 (FTP)
 //define("FILEIO_PARAMETER", serialize(array('00000000000000000000000000000000'))); // FileIO參數 (ImageShack)
@@ -128,8 +127,6 @@ $BAD_FILEMD5 = array("dummy","dummy2"); // 限制上傳附加圖檔之MD5檢查�
 
 // 附加圖檔限制
 define("MAX_KB", 2000); // 附加圖檔上傳容量限制KB (php內定為最高2MB)
-define("STORAGE_LIMIT", 1); // 附加圖檔總容量限制功能 (啟動：1 關閉：0)
-define("STORAGE_MAX", 30000); // 附加圖檔總容量限制上限大小 (單位：KB)
 define("ALLOW_UPLOAD_EXT", 'GIF|JPG|JPEG|PNG|BMP|SWF|WEBM'); // 接受之附加圖檔副檔名 (送出前表單檢查用，用 | 分隔)
 define("USE_WEBM", 1); //開啟WEBM上傳
 define("ALLOW_WEBM_AUDIO", 1); //WEBM可不可以有音軌

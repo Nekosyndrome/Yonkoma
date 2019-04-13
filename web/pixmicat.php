@@ -93,12 +93,6 @@ function updatelog($board,$resno=0,$page_num=-1,$single_page=false){
 		$old_sensor = true; // 標記打開
 		$arr_old = array_flip(PIOSensor::listee('predict', $LIMIT_SENSOR)); // 過舊文章陣列
 	}
-	$tmp_total_size = $FileIO->getCurrentStorageSize(); // 目前附加圖檔使用量
-	$tmp_STORAGE_MAX = STORAGE_MAX * (($tmp_total_size >= STORAGE_MAX) ? 1 : 0.95); // 預估上限值
-	if(STORAGE_LIMIT && STORAGE_MAX > 0 && ($tmp_total_size >= $tmp_STORAGE_MAX)){
-		$kill_sensor = true; // 標記打開
-		$arr_kill = $PIO->delOldAttachments($tmp_total_size, $tmp_STORAGE_MAX); // 過舊附檔陣列
-	}
 
 	$PMS->useModuleMethods('ThreadFront', array(&$pte_vals['{$THREADFRONT}'], $resno)); // "ThreadFront" Hook Point
 	$PMS->useModuleMethods('ThreadRear', array(&$pte_vals['{$THREADREAR}'], $resno)); // "ThreadRear" Hook Point
@@ -256,9 +250,9 @@ function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_ki
 		}
 
 		// 設定附加圖檔顯示
-		if($ext && $FileIO->imageExists($tim.$ext)){
+		if($ext && $FileIO->imageExists($board, $tim.$ext)){
 			$imageURL = $FileIO->getImageURL($board, $tim.$ext); // image URL
-			$thumbName = $FileIO->resolveThumbName($tim); // thumb Name
+			$thumbName = $FileIO->resolveThumbName($board, $tim); // thumb Name
 
 			$imgsrc = '<a class="file-thumb" href="'.$imageURL.'" target="_blank" rel="nofollow"><img src="nothumb.gif" class="img" alt="'.$imgsize.'" title="'.$imgsize.'" /></a>'; // 預設顯示圖樣式 (無預覽圖時)
 			if($tw && $th){
@@ -290,7 +284,6 @@ function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_ki
 		}
 
 		// 設定討論串屬性
-		if(STORAGE_LIMIT && $kill_sensor) if(isset($arr_kill[$no])) $WARN_BEKILL = '<span class="warn_txt">'._T('warn_sizelimit').'</span><br />'."\n"; // 預測刪除過大檔
 		if(!$i){ // 首篇 Only
 			if($old_sensor) if(isset($arr_old[$no])) $WARN_OLD = '<span class="warn_txt">'._T('warn_oldthread').'</span><br />'."\n"; // 快要被刪除的提示
 			$flgh = $PIO->getPostStatus($status);
@@ -552,15 +545,6 @@ function regist(){
 		}
 	}
 
-	// 附加圖檔容量限制功能啟動：刪除過大檔
-	if(STORAGE_LIMIT && STORAGE_MAX > 0){
-		$tmp_total_size = $FileIO->getCurrentStorageSize(); // 取得目前附加圖檔使用量
-		if($tmp_total_size > STORAGE_MAX){
-			$files = $PIO->delOldAttachments($tmp_total_size, STORAGE_MAX, false);
-			$delta_totalsize -= $FileIO->deleteImage($board, $files);
-		}
-	}
-
 	// 判斷欲回應的文章是不是剛剛被刪掉了
 	if($resto){
 		if($ThreadExistsBefore){ // 欲回應的討論串是否存在
@@ -635,10 +619,6 @@ function regist(){
 			$FileIO->uploadImage($board, $tim.'s.'.$THUMB_SETTING['Format'], $thumbFile, filesize($thumbFile));
 			$delta_totalsize += filesize($thumbFile);
 		}
-	}
-	// delta != 0 表示總檔案大小有更動，須更新快取
-	if($delta_totalsize != 0){
-		$FileIO->updateStorageSize($delta_totalsize);
 	}
 	updatelog($board);
 
@@ -731,7 +711,6 @@ function usrdel(){
 	if($search_flag){
 		if(!$onlyimgdel) $PMS->useModuleMethods('PostOnDeletion', array($delposts, 'frontend')); // "PostOnDeletion" Hook Point
 		$files = $onlyimgdel ? $PIO->removeAttachments($delposts) : $PIO->removePosts($delposts);
-		$FileIO->updateStorageSize(-$FileIO->deleteImage($board, $files)); // 更新容量快取
 		deleteCache($delposts);
 		$PIO->dbCommit();
 	}else error(_T('del_wrongpwornotfound'));
@@ -822,7 +801,6 @@ function admindel(){
 		$delno = array_merge($delno, $_POST['clist']);
 		if($onlyimgdel != 'on') $PMS->useModuleMethods('PostOnDeletion', array($delno, 'backend')); // "PostOnDeletion" Hook Point
 		$files = ($onlyimgdel != 'on') ? $PIO->removePosts($delno) : $PIO->removeAttachments($delno);
-		$FileIO->updateStorageSize(-$FileIO->deleteImage($board, $files));
 		deleteCache($delno);
 		$is_modified = true;
 	}
@@ -876,10 +854,10 @@ function admindel(){
 		}
 
 		// 從記錄抽出附加圖檔使用量並生成連結
-		if($ext && $FileIO->imageExists($tim.$ext)){
+		if($ext && $FileIO->imageExists($board, $tim.$ext)){
 			$clip = '<a href="'.$FileIO->getImageURL($board, $tim.$ext).'" target="_blank">'.$tim.$ext.'</a>';
 			$size = $FileIO->getImageFilesize($tim.$ext);
-			$thumbName = $FileIO->resolveThumbName($tim);
+			$thumbName = $FileIO->resolveThumbName($board, $tim);
 			if($thumbName != false) $size += $FileIO->getImageFilesize($thumbName);
 		}else{
 			$clip = $md5chksum = '--';
@@ -903,7 +881,6 @@ _ADMINEOF_;
 	foreach($funclist as $f) echo '<option value="'.$f[0].'">'.$f[1].'</option>';
 	echo '</select>
 <input type="submit" value="'._T('admin_submit_btn').'" /> <input type="reset" value="'._T('admin_reset_btn').'" /> [<input type="checkbox" name="onlyimgdel" id="onlyimgdel" value="on" /><label for="onlyimgdel">'._T('del_img_only').'</label>]</p>
-<p>'._T('admin_totalsize', $FileIO->getCurrentStorageSize()).'</p>
 </div>
 </form>
 <hr />
@@ -929,15 +906,6 @@ _ADMINEOF_;
 	die('</tr></table><br/><br/>
 </body>
 </html>');
-}
-
-/**
- * 計算目前附加圖檔使用容量 (單位：KB)
- * @deprecated Use FileIO->getCurrentStorageSize() / FileIO->updateStorageSize($delta) instead
- */
-function total_size($delta=0){
-	$FileIO = PMCLibrary::getFileIOInstance();
-	return $FileIO->getCurrentStorageSize($delta);
 }
 
 /* 搜尋(全文檢索)功能 */
@@ -1038,15 +1006,6 @@ function showstatus(){
 
 	$countline = $PIO->postCount(); // 計算投稿文字記錄檔目前資料筆數
 	$counttree = $PIO->threadCount(); // 計算樹狀結構記錄檔目前資料筆數
-	$tmp_total_size = $FileIO->getCurrentStorageSize(); // 附加圖檔使用量總大小
-	$tmp_ts_ratio = STORAGE_MAX > 0 ? $tmp_total_size / STORAGE_MAX : 0; // 附加圖檔使用量
-
-	// 決定「附加圖檔使用量」提示文字顏色
-  	if($tmp_ts_ratio < 0.3 ) $clrflag_sl = '235CFF';
-	elseif($tmp_ts_ratio < 0.5 ) $clrflag_sl = '0CCE0C';
-	elseif($tmp_ts_ratio < 0.7 ) $clrflag_sl = 'F28612';
-	elseif($tmp_ts_ratio < 0.9 ) $clrflag_sl = 'F200D3';
-	else $clrflag_sl = 'F2004A';
 
 	// 生成預覽圖物件資訊及功能是否正常
 	$func_thumbWork = '<span style="color: red;">'._T('info_nonfunctional').'</span>';
@@ -1101,17 +1060,7 @@ function showstatus(){
 <tr><td>'._T('info_basic_theme').'</td><td colspan="3"> '.$twig->renderBlock('THEMENAME', []).' '.$twig->renderBlock('THEMEVER', []).'<br/>by '.$twig->renderBlock('THEMEAUTHOR', []).'</td></tr>
 <tr><td style="text-align:center" colspan="4">'._T('info_dsusage_top').'</td></tr>
 <tr style="text-align:center"><td>'._T('info_basic_threadcount').'</td><td colspan="'.(isset($piosensorInfo)?'2':'3').'"> '.$counttree.' '._T('info_basic_threads').'</td>'.(isset($piosensorInfo)?'<td rowspan="2">'.$piosensorInfo.'</td>':'').'</tr>
-<tr style="text-align:center"><td>'._T('info_dsusage_count').'</td><td colspan="'.(isset($piosensorInfo)?'2':'3').'">'.$countline.'</td></tr>
-<tr><td style="text-align:center" colspan="4">'._T('info_fileusage_top').STORAGE_LIMIT.' '._T('info_0disable1enable').'</td></tr>';
-
-	if(STORAGE_LIMIT){
-		$dat .= '
-<tr style="text-align:center"><td>'._T('info_fileusage_limit').'</td><td colspan="2">'.STORAGE_MAX.' KB</td><td rowspan="2">'._T('info_dsusage_usage').'<br /><span style="color: #'.$clrflag_sl.'">'.substr(($tmp_ts_ratio * 100), 0, 6).'</span> %</td></tr>
-<tr style="text-align:center"><td>'._T('info_fileusage_count').'</td><td colspan="2"><span style="color: #'.$clrflag_sl.'">'.$tmp_total_size.' KB</span></td></tr>';
-	}else{
-		$dat .= '
-<tr style="text-align:center"><td>'._T('info_fileusage_count').'</td><td>'.$tmp_total_size.' KB</td><td colspan="2">'._T('info_dsusage_usage').'<br /><span style="color: green;">'._T('info_fileusage_unlimited').'</span></td></tr>';
-	}
+<tr style="text-align:center"><td>'._T('info_dsusage_count').'</td><td colspan="'.(isset($piosensorInfo)?'2':'3').'">'.$countline.'</td></tr>';
 
 	$dat .= '
 <tr><td style="text-align:center" colspan="4">'._T('info_server_top').'</td></tr>
@@ -1190,7 +1139,7 @@ switch($mode){
 			updatelog($board, 0, intval($_GET['page_num']));
 		}else{ // 導至靜態庫存頁
 			// TODO!
-			if(!is_file(PHP_SELF2)) updatelog($board);
+			//if(!is_file(PHP_SELF2)) updatelog($board);
 			header('HTTP/1.1 302 Moved Temporarily');
 			header('Location: '.fullURL().PHP_SELF2.'?'.time());
 		}

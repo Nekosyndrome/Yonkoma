@@ -70,8 +70,6 @@ class PMCLibrary {
 			$instFileIO = new $fileIoExactClass(
                                 unserialize(FILEIO_PARAMETER),
 				array( // FileIO 環境常數
-					'IFS.PATH' => ROOTPATH.'lib/fileio/ifs.php',
-					'IFS.LOG' => STORAGE_PATH.FILEIO_INDEXLOG,
 					'IMG' => IMG_DIR,
 					'THUMB' => THUMB_DIR
 				)

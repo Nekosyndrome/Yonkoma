@@ -177,7 +177,6 @@ $language['form_contpost']				= 'Continuous';
 $language['form_delete_password']		= 'Password';
 $language['form_delete_password_notice']= '(for deletion, 8 chars max)';
 $language['form_notice']				= '<li>Supported file types are: %1$s</li><li>Maximum file size allowed is %2$s KB. Fill E-mail with sage for not bumping post.</li><li>mages greater than %3$s * %4$s pixels will be thumbnailed.</li>';
-$language['form_notice_storage_limit']	= '<li>Current storage usage: %1$s KB / %2$s KB</li>';
 $language['form_notice_noscript']		= '*** You disabled JavaScript, but this won\'t affect you when browsing and posting.';
 $language['error_back']					= 'Back';
 $language['ip_banned']					= 'Listed in IP/Hostname Blacklist';

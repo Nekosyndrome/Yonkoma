@@ -174,7 +174,7 @@ class mod_ajax extends ModuleHelper{
 		// 設定附加圖檔顯示
 		if($ext && $FileIO->imageExists($board, $tim.$ext)){
 			$imageURL = $FileIO->getImageURL($board, $tim.$ext); // image URL
-			$thumbName = $FileIO->resolveThumbName($tim); // thumb Name
+			$thumbName = $FileIO->resolveThumbName($board, $tim); // thumb Name
 
 			$imgsrc = '<a class="file-thumb" href="'.$imageURL.'" target="_blank" rel="nofollow"><img src="nothumb.gif" class="img" alt="'.$imgsize.'" title="'.$imgsize.'" /></a>'; // 預設顯示圖樣式 (無預覽圖時)
 			if($tw && $th){

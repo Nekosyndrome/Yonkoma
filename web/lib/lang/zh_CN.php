@@ -177,7 +177,6 @@ $language['form_contpost']				= '连贴功能';
 $language['form_delete_password']		= '删除用密码';
 $language['form_delete_password_notice']= '(删除文章用。8位以内的字母或数字)';
 $language['form_notice']				= '<li>允许的图片格式：%1$s，只有这些格式浏览器才能正常上传</li><li>允许的最大图片大小为 %2$s KB。当回复时在E-mail填入sage则不自动提前</li><li>当图片宽超过 %3$s 像素、高超过 %4$s 像素時会自动缩小图片显示</li>';
-$language['form_notice_storage_limit']	= '<li>目前图片使用大小： %1$s KB / %2$s KB</li>';
 $language['form_notice_noscript']		= '＊您的浏览器已关闭JavaScript，但这对您浏览或回复并无巨大影响。';
 $language['error_back']					= '返回上页';
 $language['ip_banned']					= '被列在 IP/Hostname 黑名单之內';

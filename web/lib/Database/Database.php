@@ -117,16 +117,6 @@ interface Database
     public function fetchPosts($postlist, $fields = '*');
 
     /**
-     * 刪除舊附件 (輸出附件清單)
-     *
-     * @param  int  $total_size  目前使用容量
-     * @param  int  $storage_max 總容量限制
-     * @param  boolean $warnOnly    是否僅提醒不刪除
-     * @return array               附加圖檔及預覽圖陣列
-     */
-    public function delOldAttachments($total_size, $storage_max, $warnOnly = true);
-
-    /**
      * 刪除文章
      *
      * @param  array $posts 刪除之文章編號陣列

@@ -177,7 +177,6 @@ $language['form_contpost']				= '連貼り';
 $language['form_delete_password']		= '投稿キー';
 $language['form_delete_password_notice']= '(記事の削除用。英数字で8文字以内)';
 $language['form_notice']				= '<li>添付可能ファイル：%1$s ブラウザによっては正常に添付できないことがあります。</li><li>最大投稿データ量は %2$s KBまで。sage機能付き。</li><li>画像は横 %3$s ピクセル、縦 %4$s ピクセルを超えると縮小表示されます。</li>';
-$language['form_notice_storage_limit']	= '<li>現在の添付ファイル使用量： %1$s KB / %2$s KB</li>';
 $language['form_notice_noscript']		= '＊JavaScriptは無効にでもブラウジングと返信に影響しない。';
 $language['error_back']					= '戻る';
 $language['ip_banned']					= 'IP/ホスト名ブラックリストに記載されています。';

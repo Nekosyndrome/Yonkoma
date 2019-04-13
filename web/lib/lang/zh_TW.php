@@ -177,7 +177,6 @@ $language['form_contpost']				= '連貼機能';
 $language['form_delete_password']		= '刪除用密碼';
 $language['form_delete_password_notice']= '(刪除文章用。英數字8字元以內)';
 $language['form_notice']				= '<li>可附加圖檔類型：%1$s，瀏覽器才能正常附加圖檔</li><li>附加圖檔最大上傳資料量為 %2$s KB。</li><li>當檔案超過寬 %3$s 像素、高 %4$s 像素時會自動縮小尺寸顯示</li>';
-$language['form_notice_storage_limit']	= '<li>目前附加圖檔使用量大小： %1$s KB / %2$s KB</li>';
 $language['form_notice_noscript']		= '＊您選擇關閉了JavaScript，但這對您的瀏覽及發文應無巨大影響';
 $language['error_back']					= '回上頁';
 $language['ip_banned']					= '被列在 IP/Hostname 封鎖名單之內';

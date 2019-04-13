@@ -327,34 +327,6 @@ class Sqlite implements Database
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /* 刪除舊附件 (輸出附件清單) */
-    public function delOldAttachments($total_size, $storage_max, $warnOnly = true)
-    {
-        $FileIO = PMCLibrary::getFileIOInstance();
-        if (!$this->prepared) {
-            $this->dbPrepare();
-        }
-
-        $arr_warn = $arr_kill = array(); // 警告 / 即將被刪除標記
-        ($result = $this->con->query('SELECT no,ext,tim FROM '.$this->tablename.' WHERE ext <> "" ORDER BY no')) or $this->_error_handler('Get the old post failed', __LINE__);
-        while (list($dno, $dext, $dtim) = $result->fetch(PDO::FETCH_NUM)) {
-            $dfile = $dtim.$dext;
-            $dthumb = $FileIO->resolveThumbName($dtim);
-            if ($FileIO->imageExists($dfile)) {
-                $total_size -= $FileIO->getImageFilesize($dfile) / 1024;
-                $arr_kill[] = $dno;
-                $arr_warn[$dno] = 1;
-            } // 標記刪除
-            if ($dthumb && $FileIO->imageExists($dthumb)) {
-                $total_size -= $FileIO->getImageFilesize($dthumb) / 1024;
-            }
-            if ($total_size < $storage_max) {
-                break;
-            }
-        }
-        return $warnOnly ? $arr_warn : $this->removeAttachments($arr_kill);
-    }
-
     /* 刪除文章 */
     public function removePosts($posts)
     {
@@ -401,11 +373,11 @@ class Sqlite implements Database
         $sth->execute($posts) or $this->_error_handler('Get attachments of the post failed', __LINE__);
         while (list($dext, $dtim) = $sth->fetch(PDO::FETCH_NUM)) {
             $dfile = $dtim.$dext;
-            $dthumb = $FileIO->resolveThumbName($dtim);
-            if ($FileIO->imageExists($dfile)) {
+            $dthumb = $FileIO->resolveThumbName($this->board, $dtim);
+            if ($FileIO->imageExists($this->board, $dfile)) {
                 $files[] = $dfile;
             }
-            if ($dthumb && $FileIO->imageExists($dthumb)) {
+            if ($dthumb && $FileIO->imageExists($this->board, $dthumb)) {
                 $files[] = $dthumb;
             }
         }
@@ -496,7 +468,7 @@ class Sqlite implements Database
         ($result = $this->con->query('SELECT tim,ext FROM '.$this->tablename.' WHERE ext <> "" AND md5chksum = "'.$md5hash.'" ORDER BY no DESC'))
             or $this->_error_handler('Get the post to check the duplicate attachment failed', __LINE__);
         while (list($ltim, $lext) = $result->fetch(PDO::FETCH_NUM)) {
-            if ($FileIO->imageExists($ltim.$lext)) {
+            if ($FileIO->imageExists($this->board, $ltim.$lext)) {
                 return true; // 有相同檔案
             }
         }

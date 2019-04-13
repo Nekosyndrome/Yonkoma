@@ -92,9 +92,6 @@ var ext="{{ ALLOW_UPLOAD_EXT }}".toUpperCase().split("|");
 <tr><td colspan="2">
 <div id="postinfo">
 <ul>{{ FORM_NOTICE }}
-{% if FORM_NOTICE_STORAGE_LIMIT %}
-    {{ FORM_NOTICE_STORAGE_LIMIT }}
-{% endif %}
 {{ HOOKPOSTINFO }}
 {{ ADDITION_INFO }}
 </ul>

@@ -64,25 +64,11 @@ interface IFileIO {
     /**
      * 取得預覽圖檔名。
      *
+	 * @param string $board
      * @param string $thumbPattern 預覽圖檔名格式
      * @return string 預覽圖檔名
      */
-    function resolveThumbName($thumbPattern);
-
-    /**
-     * 回傳目前總檔案大小 (單位 KB)
-     *
-     * @return int 目前總檔案大小
-     */
-    function getCurrentStorageSize();
-
-    /**
-     * 更新總檔案大小數值
-     *
-     * @param int $delta 本次更動檔案大小，作為差異修改之用 (單位 byte)
-     * @return int 目前容量大小 (單位 byte)
-     */
-    function updateStorageSize($delta = 0);
+    function resolveThumbName($board, $thumbPattern);
 }
 
 /**
