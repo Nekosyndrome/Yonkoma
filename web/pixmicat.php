@@ -62,23 +62,11 @@ function updatelog($board,$resno=0,$page_num=-1,$single_page=false){
 		}
 	}else{
 		if(!$PIO->isThread($resno)){ error(_T('thread_not_found')); }
-		$AllRes = isset($_GET['page_num']) && $_GET['page_num']=='all'; // 是否使用 ALL 全部輸出
+		$AllRes = true;
 
 		// 計算回應分頁範圍
 		$tree_count = $PIO->postCount($resno) - 1; // 討論串回應個數
-		if($tree_count && RE_PAGE_DEF){ // 有回應且RE_PAGE_DEF > 0才做分頁動作
-			if($page_num==='all'){ // show all
-				$page_num = 0;
-				$RES_start = 1; $RES_amount = $tree_count;
-			}else{
-				if($page_num==='RE_PAGE_MAX') $page_num = ceil($tree_count / RE_PAGE_DEF) - 1; // 特殊值：最末頁
-				if($page_num < 0) $page_num = 0; // 負數
-				if($page_num * RE_PAGE_DEF >= $tree_count) error(_T('page_not_found'));
-				$RES_start = $page_num * RE_PAGE_DEF + 1; // 開始
-				$RES_amount = RE_PAGE_DEF; // 取幾個
-			}
-		}elseif($page_num > 0) error(_T('page_not_found')); // 沒有回應的情況只允許page_num = 0 或負數
-		else{ $RES_start = 1; $RES_amount = $tree_count; $page_num = 0; } // 輸出全部回應
+		$RES_start = 1; $RES_amount = $tree_count; $page_num = 0; // 輸出全部回應
 
 		if(USE_RE_CACHE && !$adminMode){ // 檢查快取是否仍可使用 / 頁面有無更動
 			$cacheETag = md5(($AllRes ? 'all' : $page_num).'-'.$tree_count); // 最新狀態快取用 ETag
@@ -144,24 +132,7 @@ function updatelog($board,$resno=0,$page_num=-1,$single_page=false){
 		// 換頁判斷
 		$prev = ($resno ? $page_num : $page) - 1;
 		$next = ($resno ? $page_num : $page) + 1;
-		if($resno){ // 回應分頁
-			if(RE_PAGE_DEF > 0){ // 回應分頁開啟
-				$pte_vals['{$PAGENAV}'] .= '<table style="border: 1px solid gray" ><tr><td style="white-space: nowrap;">';
-				$pte_vals['{$PAGENAV}'] .= ($prev >= 0) ? '<a rel="prev" href="'.PHP_SELF.'?res='.$resno.'&amp;page_num='.$prev.'">'._T('prev_page').'</a>' : _T('first_page');
-				$pte_vals['{$PAGENAV}'] .= "</td><td>";
-				if($tree_count==0) $pte_vals['{$PAGENAV}'] .= '[<b>0</b>] '; // 無回應
-				else{
-					for($i = 0, $len = $tree_count / RE_PAGE_DEF; $i < $len; $i++){
-						if(!$AllRes && $page_num==$i) $pte_vals['{$PAGENAV}'] .= '[<b>'.$i.'</b>] ';
-						else $pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?res='.$resno.'&amp;page_num='.$i.'">'.$i.'</a>] ';
-					}
-					$pte_vals['{$PAGENAV}'] .= $AllRes ? '[<b>'._T('all_pages').'</b>] ' : ($tree_count > RE_PAGE_DEF ? '[<a href="'.PHP_SELF.'?res='.$resno.'&amp;page_num=all">'._T('all_pages').'</a>] ' : '');
-				}
-				$pte_vals['{$PAGENAV}'] .= '</td><td style="white-space: nowrap;">';
-				$pte_vals['{$PAGENAV}'] .= (!$AllRes && $tree_count > $next * RE_PAGE_DEF) ? '<a href="'.PHP_SELF.'?res='.$resno.'&amp;page_num='.$next.'">'._T('next_page').'</a>' : _T('last_page');
-				$pte_vals['{$PAGENAV}'] .= '</td></tr></table>'."\n";
-			}
-		}else{ // 一般分頁
+		if(!$resno){ // 一般分頁
 			$pte_vals['{$PAGENAV}'] .= '<table style="border: 1px solid gray" ><tr>';
 			if($prev >= 0){
 				if(!$adminMode && $prev==0) $pte_vals['{$PAGENAV}'] .= '<td><form action="'.PHP_SELF2.'" method="get">';
@@ -204,8 +175,7 @@ function updatelog($board,$resno=0,$page_num=-1,$single_page=false){
 			}else $pte_vals['{$PAGENAV}'] .= '<td style="white-space: nowrap;">'._T('last_page').'</td>';
 			$pte_vals['{$PAGENAV}'] .= '</tr></table>'."\n";
 		}
-		$pte_vals['{$PAGENAV}'] .= '<br style="clear: left;" />
-</div>';
+		$pte_vals['{$PAGENAV}'] .= '<br style="clear: left;" /> </div>';
 		$dat .= $twig->renderBlock('MAIN', transformTemplateArray($pte_vals));
 		foot($dat);
 
@@ -280,8 +250,6 @@ function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_ki
 						$r_page = $tree_clone[$val[2]]; // 引用回應在整體討論串中的位置
 						// 在此頁顯示區間內，輸出錨點即可
 						if(isset($tree_cut[$val[2]])) $com = str_replace($val[0], '<a class="qlink" href="#r'.$val[2].'">'.$val[0].'</a>', $com);
-						// 非此頁顯示區間，輸出完整頁面位置
-						else $com = str_replace($val[0], '<a class="qlink" href="'.PHP_SELF.'?res='.$tree[0].(RE_PAGE_DEF ? '&amp;page_num='.floor(($r_page - 1) / RE_PAGE_DEF) : '').'#r'.$val[2].'">'.$val[0].'</a>', $com);
 					}
 				}
 			}
@@ -1119,7 +1087,6 @@ function showstatus(){
 <tr><td>'._T('info_basic_pio').'</td><td colspan="3"> '.$config['db']['type'].' : '.$PIO->pioVersion().'</td></tr>
 <tr><td>'._T('info_basic_threadsperpage').'</td><td colspan="3"> '.PAGE_DEF.' '._T('info_basic_threads').'</td></tr>
 <tr><td>'._T('info_basic_postsperpage').'</td><td colspan="3"> '.RE_DEF.' '._T('info_basic_posts').'</td></tr>
-<tr><td>'._T('info_basic_postsinthread').'</td><td colspan="3"> '.RE_PAGE_DEF.' '._T('info_basic_posts').' '._T('info_basic_posts_showall').'</td></tr>
 <tr><td>'._T('info_basic_bumpposts').'</td><td colspan="3"> '.MAX_RES.' '._T('info_basic_posts').' '._T('info_basic_0disable').'</td></tr>
 <tr><td>'._T('info_basic_bumphours').'</td><td colspan="3"> '.MAX_AGE_TIME.' '._T('info_basic_hours').' '._T('info_basic_0disable').'</td></tr>
 <tr><td>'._T('info_basic_urllinking').'</td><td colspan="3"> '.AUTO_LINK.' '._T('info_0no1yes').'</td></tr>

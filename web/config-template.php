@@ -155,7 +155,6 @@ $LIMIT_SENSOR = array('ByPostCountCondition'=>500); // 文章自動刪除機制�
 define("PAGE_DEF", 15); // 一頁顯示幾篇討論串
 define("ADMIN_PAGE_DEF", 20); // 管理模式下，一頁顯示幾筆資料
 define("RE_DEF", 10); // 一篇討論串最多顯示之回應筆數 (超過則自動隱藏，全部隱藏：0)
-define("RE_PAGE_DEF", 30); // 回應模式一頁顯示幾筆回應內容 (分頁用，全部顯示：0)
 define("MAX_RES", 30); // 回應筆數超過多少則不自動推文 (關閉：0)
 define("MAX_AGE_TIME", 0); // 討論串可接受推文的時間範圍 (單位：小時，討論串存在超過此時間則回應皆不再自動推文 關閉：0)
 define("COMM_MAX", 2000); // 內文接受字數 (UTF-8)
