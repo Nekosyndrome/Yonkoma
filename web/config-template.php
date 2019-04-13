@@ -91,7 +91,6 @@ define("CAP_SUFFIX", ' ★'); // 管理員キャップ後綴字元 (請務必有
 define("CAP_ISHTML", 1); // 管理員キャップ啟動後內文是否接受HTML標籤 (是：1 否：0)
 
 // 功能切換
-define("USE_FLOATFORM", 1); // 新增文章表單使用自動隱藏 (是：1 否：0)
 define("USE_SEARCH", 1); // 開放搜尋功能 (是：1 否：0)
 define("USE_UPSERIES", 1); // 是否啟用連貼機能 [開主題後自動指向到主題下以方便連貼] (是：1 否：0)
 define("RESIMG", 1); // 回應附加圖檔機能 (開啟：1 關閉：0)

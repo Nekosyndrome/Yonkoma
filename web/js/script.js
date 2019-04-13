@@ -300,13 +300,6 @@ UI.PopupView = (function() {
 	return PopupView;
 })();
 
-//pixmicat default functions
-function hideform() {
-	$("#postform")[0].className = 'hide_btn';
-	$("#postform_tbl")[0].className = 'hide';
-	$("#hide")[0].className = 'hide';
-	$("#show")[0].className = 'show';
-}
 (function(){
 	var uuid = '';
 	var idu = 'xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx';
@@ -359,10 +352,7 @@ function hideform() {
 		$("#show")[0].className = 'hide';
 	}
 	$(document).ready(function() {
-		
-		$('#show').mouseover(function(){ showform(); });
-		$('#hide').mouseover(function(){ hideform(); });
-		
+				
 		$('#postform_main').submit(function(e) {
 			//pixmicat code
 			var a, j, ext_allowed, ext_length;
