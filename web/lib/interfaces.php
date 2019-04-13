@@ -19,42 +19,47 @@ interface IFileIO {
     /**
      * 圖檔是否存在。
      *
+	 * @param string $board   版面名稱
      * @param string $imgname 圖檔名稱
      * @return bool 是否存在
      */
-    function imageExists($imgname);
+    function imageExists($board, $imgname);
 
     /**
      * 刪除圖片。
      *
+	 * @param string $board   版面名稱
      * @param string $imgname 圖檔名稱
      */
-    function deleteImage($imgname);
+    function deleteImage($board, $imgname);
 
     /**
      * 上傳圖片。
      *
+	 * @param string $board   版面名稱
      * @param string $imgname 圖檔名稱
      * @param string $imgpath 圖檔路徑
      * @param int $imgsize 圖檔檔案大小 (byte)
      */
-    function uploadImage($imgname, $imgpath, $imgsize);
+    function uploadImage($board, $imgname, $imgpath, $imgsize);
 
     /**
      * 取得圖檔檔案大小。
      *
+	 * @param string $board   版面名稱
      * @param string $imgname 圖檔名稱
      * @return mixed 檔案大小 (byte) 或 0 (失敗時)
      */
-    function getImageFilesize($imgname);
+    function getImageFilesize($board, $imgname);
 
     /**
      *　取得圖檔的 URL 以便 &lt;img&gt; 標籤顯示圖片。
      *
+	 * @param string $board   版面名稱
      * @param string $imgname 圖檔名稱
      * @return string 圖檔 URL
      */
-    function getImageURL($imgname);
+    function getImageURL($board, $imgname);
 
     /**
      * 取得預覽圖檔名。

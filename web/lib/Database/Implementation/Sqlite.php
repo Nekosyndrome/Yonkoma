@@ -20,10 +20,12 @@ class Sqlite implements Database
     private $ENV, $DSN, $tablename; // Local Constant
     /** @var \PDO */
     private $con;
+    private $board;
     private $prepared, $useTransaction; // Local Global
 
-    public function __construct($config, $ENV)
+    public function __construct($config, $board, $ENV)
     {
+        $this->board = $board;
         $this->ENV = $ENV;
         $this->prepared = false;
         $this->dbConnect($config);
@@ -48,8 +50,13 @@ class Sqlite implements Database
 
     public function dbConnect($config)
     {
-        $this->DSN = 'sqlite:'. $config['database'];
-		$this->tablename = 'imglog';
+        var_dump("BOARD!! ". $this->board);
+        if (!$this->board) {
+            $this->DSN = 'sqlite:'. $config['db_folder']. '/'. $config['database'];
+        } else {
+            $this->DSN = 'sqlite:'. $config['db_folder']. "/boards/". $this->board. ".db3";
+        }
+		$this->tablename = 'imglog'; //TODO!!
     }
 
     /* 初始化 */

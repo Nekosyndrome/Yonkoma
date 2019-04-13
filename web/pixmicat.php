@@ -9,9 +9,10 @@ require ROOTPATH.'lib/lib_compatible.php'; // 引入相容函式庫
 require ROOTPATH.'lib/lib_common.php'; // 引入共通函式檔案
 require ROOTPATH.'lib/webm.php';
 use Yonkoma\Singleton;
+use Yonkoma\Helper;
 
 /* 更新記錄檔檔案／輸出討論串 */
-function updatelog($resno=0,$page_num=-1,$single_page=false){
+function updatelog($board,$resno=0,$page_num=-1,$single_page=false){
 	global $LIMIT_SENSOR;
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
@@ -118,7 +119,7 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 	for($page = $page_start; $page <= $page_end; $page++){
 		$dat = ''; $pte_vals['{$THREADS}'] = '';
 		head($dat, $resno);
-		form($dat, $resno);
+		form($dat, $board, $resno);
 		// 輸出討論串內容
 		for($i = 0; $i < $inner_for_count; $i++){
 			// 取出討論串編號
@@ -165,8 +166,8 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 			if($prev >= 0){
 				if(!$adminMode && $prev==0) $pte_vals['{$PAGENAV}'] .= '<td><form action="'.PHP_SELF2.'" method="get">';
 				else{
-					if($adminMode || (STATIC_HTML_UNTIL != -1) && ($prev > STATIC_HTML_UNTIL)) $pte_vals['{$PAGENAV}'] .= '<td><form action="'.PHP_SELF.'?page_num='.$prev.'" method="post">';
-					else $pte_vals['{$PAGENAV}'] .= '<td><form action="'.$prev.PHP_EXT.'" method="get">';
+					if($adminMode || (STATIC_HTML_UNTIL != -1) && ($prev > STATIC_HTML_UNTIL)) $pte_vals['{$PAGENAV}'] .= '<td><form action="'.Helper\anchor($board).'/?page_num='.$prev.'" method="post">';
+					else $pte_vals['{$PAGENAV}'] .= '<td><form action="'. Helper\anchor($board, $prev.PHP_EXT).'" method="get">';
 				}
 				$pte_vals['{$PAGENAV}'] .= '<div><input type="submit" value="'._T('prev_page').'" /></div></form></td>';
 			}else $pte_vals['{$PAGENAV}'] .= '<td style="white-space: nowrap;">'._T('first_page').'</td>';
@@ -190,15 +191,15 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 				else {
 					$pageNext = ($i==$next) ? ' rel="next"' : '';
 					if(!$adminMode && $i==0) $pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF2.'?">0</a>] ';
-					elseif($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL)) $pte_vals['{$PAGENAV}'] .= '[<a href="'.PHP_SELF.'?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
-					else $pte_vals['{$PAGENAV}'] .= '[<a href="'.$i.PHP_EXT.'?"'.$pageNext.'>'.$i.'</a>] ';
+					elseif($adminMode || (STATIC_HTML_UNTIL != -1 && $i > STATIC_HTML_UNTIL)) $pte_vals['{$PAGENAV}'] .= '[<a href="'.Helper\anchor($board).'/?page_num='.$i.'"'.$pageNext.'>'.$i.'</a>] ';
+					else $pte_vals['{$PAGENAV}'] .= '[<a href="'. Helper\anchor($board, $i.PHP_EXT).'?"'.$pageNext.'>'.$i.'</a>] ';
 				}
 			}
 			$pte_vals['{$PAGENAV}'] .= '</td>';
 			
 			if($threads_count > $next * PAGE_DEF){
-				if($adminMode || (STATIC_HTML_UNTIL != -1) && ($next > STATIC_HTML_UNTIL)) $pte_vals['{$PAGENAV}'] .= '<td><form action="'.PHP_SELF.'?page_num='.$next.'" method="post">';
-				else $pte_vals['{$PAGENAV}'] .= '<td><form action="'.$next.PHP_EXT.'" method="get">';
+				if($adminMode || (STATIC_HTML_UNTIL != -1) && ($next > STATIC_HTML_UNTIL)) $pte_vals['{$PAGENAV}'] .= '<td><form action="'.Helper\anchor($board).'/?page_num='.$next.'" method="post">';
+				else $pte_vals['{$PAGENAV}'] .= '<td><form action="'. Helper\anchor($board, $next.PHP_EXT).'" method="get">';
 				$pte_vals['{$PAGENAV}'] .= '<div><input type="submit" value="'._T('next_page').'" /></div></form></td>';
 			}else $pte_vals['{$PAGENAV}'] .= '<td style="white-space: nowrap;">'._T('last_page').'</td>';
 			$pte_vals['{$PAGENAV}'] .= '</tr></table>'."\n";
@@ -210,13 +211,13 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 
 		// 存檔 / 輸出
 		if($single_page || ($page_num == -1 && !$resno)){ // 靜態快取頁面生成
-			if($page==0) $logfilename = PHP_SELF2;
-			else $logfilename = $page.PHP_EXT;
-			$fp = fopen(STORAGE_PATH.$logfilename, 'w');
+			if($page==0) $logfilename = Helper\path_join(STORAGE_PATH, 'boards', $board, PHP_SELF2);
+			else $logfilename = Helper\path_join(STORAGE_PATH, 'boards', $board, $page.PHP_EXT);
+			$fp = fopen($logfilename, 'w');
 			stream_set_write_buffer($fp, 0);
 			fwrite($fp, $dat);
 			fclose($fp);
-			@chmod(STORAGE_PATH.$logfilename, 0666);
+			@chmod($logfilename, 0666);
 			if(STATIC_HTML_UNTIL != -1 && STATIC_HTML_UNTIL==$page) break; // 頁面數目限制
 		}else{ // PHP 輸出 (回應模式/一般動態輸出)
 			if(USE_RE_CACHE && !$adminMode && $resno && !isset($_GET['upseries'])){ // 更新快取
@@ -238,11 +239,13 @@ function updatelog($resno=0,$page_num=-1,$single_page=false){
 
 /* 輸出討論串架構 */
 function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_kill, $arr_old, $kill_sensor, $old_sensor, $showquotelink=true, $adminMode=false){
+	global $config;
 	$PIO = PMCLibrary::getPIOInstance();
 	$FileIO = PMCLibrary::getFileIOInstance();
 	$PMS = PMCLibrary::getPMSInstance();
 	$twig = Singleton::getTwig('page.twig');
 
+	$board = Yonkoma\Helper\current_board();
 	$thdat = ''; // 討論串輸出碼
 	$posts_count = count($posts); // 迴圈次數
 	if(gettype($tree_cut) == 'array') $tree_cut = array_flip($tree_cut); // array_flip + isset 搜尋法
@@ -286,13 +289,13 @@ function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_ki
 
 		// 設定附加圖檔顯示
 		if($ext && $FileIO->imageExists($tim.$ext)){
-			$imageURL = $FileIO->getImageURL($tim.$ext); // image URL
+			$imageURL = $FileIO->getImageURL($board, $tim.$ext); // image URL
 			$thumbName = $FileIO->resolveThumbName($tim); // thumb Name
 
 			$imgsrc = '<a class="file-thumb" href="'.$imageURL.'" target="_blank" rel="nofollow"><img src="nothumb.gif" class="img" alt="'.$imgsize.'" title="'.$imgsize.'" /></a>'; // 預設顯示圖樣式 (無預覽圖時)
 			if($tw && $th){
 				if($thumbName != false){ // 有預覽圖
-					$thumbURL = $FileIO->getImageURL($thumbName); // thumb URL
+					$thumbURL = $FileIO->getImageURL($board, $thumbName); // thumb URL
 					$img_thumb = '<small>'._T('img_sample').'</small>';
 					$imgsrc = '<a class="file-thumb" href="'.$imageURL.'" target="_blank" rel="nofollow"><img src="'.$thumbURL.'" style="width: '.$tw.'px; height: '.$th.'px;" class="img" alt="'.$imgsize.'" title="'.$imgsize.'" /></a>';
 				}elseif($ext=='.swf') $imgsrc = ''; // swf檔案不需預覽圖
@@ -303,7 +306,7 @@ function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_ki
 
 		// 設定回應 / 引用連結
 		$QUOTEBTN = 'No.'. $no;
-		if(!$resno && !$i) $REPLYBTN = '[<a href="'.PHP_SELF.'?res='.$no.'">'._T('reply_btn').'</a>]'; // 首篇
+		if(!$resno && !$i) $REPLYBTN = '[<a href="'. Yonkoma\Helper\path_join('/', $config['url']['base'], $board, $no).'">'._T('reply_btn').'</a>]'; // 首篇
 		/*
 		if($resno){ // 回應模式
 			if($showquotelink) $QUOTEBTN = '<a href="javascript:quote('.$no.');" class="qlink">No.'.$no.'</a>';
@@ -358,6 +361,7 @@ function regist(){
 
 	if($_SERVER['REQUEST_METHOD'] != 'POST') error(_T('regist_notpost')); // 非正規POST方式
 	// 欄位陷阱
+	$board = isset($_POST['board']) ? $_POST['board'] : '';
 	$FTname = isset($_POST['name']) ? $_POST['name'] : '';
 	$FTemail = isset($_POST['email']) ? $_POST['email'] : '';
 	$FTsub = isset($_POST['sub']) ? $_POST['sub'] : '';
@@ -576,7 +580,7 @@ function regist(){
 			deleteCache($delarr);
 			$PMS->useModuleMethods('PostOnDeletion', array($delarr, 'recycle')); // "PostOnDeletion" Hook Point
 			$files = $PIO->removePosts($delarr);
-			if(count($files)) $delta_totalsize -= $FileIO->deleteImage($files); // 更新 delta 值
+			if(count($files)) $delta_totalsize -= $FileIO->deleteImage($board, $files); // 更新 delta 值
 		}
 	}
 
@@ -585,7 +589,7 @@ function regist(){
 		$tmp_total_size = $FileIO->getCurrentStorageSize(); // 取得目前附加圖檔使用量
 		if($tmp_total_size > STORAGE_MAX){
 			$files = $PIO->delOldAttachments($tmp_total_size, STORAGE_MAX, false);
-			$delta_totalsize -= $FileIO->deleteImage($files);
+			$delta_totalsize -= $FileIO->deleteImage($board, $files);
 		}
 	}
 
@@ -595,7 +599,7 @@ function regist(){
 			if(!$PIO->isThread($resto)){ // 被回應的討論串存在但已被刪
 				// 提前更新資料來源，此筆新增亦不紀錄
 				$PIO->dbCommit();
-				updatelog();
+				updatelog($board);
 				error(_T('regist_threaddeleted'), $dest);
 			}else{ // 檢查是否討論串被設為禁止回應 (順便取出原討論串的貼文時間)
 				$post = $PIO->fetchPosts($resto); // [特殊] 取單篇文章內容，但是回傳的$post同樣靠[$i]切換文章！
@@ -656,11 +660,11 @@ function regist(){
 		}
 		rename($dest, $destFile);
 		if(file_exists($destFile)){
-			$FileIO->uploadImage($tim.$ext, $destFile, filesize($destFile));
+			$FileIO->uploadImage($board, $tim.$ext, $destFile, filesize($destFile));
 			$delta_totalsize += filesize($destFile);
 		}
 		if(file_exists($thumbFile)){
-			$FileIO->uploadImage($tim.'s.'.$THUMB_SETTING['Format'], $thumbFile, filesize($thumbFile));
+			$FileIO->uploadImage($board, $tim.'s.'.$THUMB_SETTING['Format'], $thumbFile, filesize($thumbFile));
 			$delta_totalsize += filesize($thumbFile);
 		}
 	}
@@ -668,7 +672,7 @@ function regist(){
 	if($delta_totalsize != 0){
 		$FileIO->updateStorageSize($delta_totalsize);
 	}
-	updatelog();
+	updatelog($board);
 
 	// 引導使用者至新頁面
 	$RedirURL = PHP_SELF2.'?'.$tim; // 定義儲存資料後轉址目標
@@ -712,6 +716,7 @@ function usrdel(){
 	$PMS = PMCLibrary::getPMSInstance();
 
 	// $pwd: 使用者輸入值, $pwdc: Cookie記錄密碼
+	$board = $_POST['board'];
 	$pwd = isset($_POST['pwd']) ? $_POST['pwd'] : '';
 	$pwdc = isset($_COOKIE['pwdc']) ? $_COOKIE['pwdc'] : '';
 	$onlyimgdel = isset($_POST['onlyimgdel']) ? $_POST['onlyimgdel'] : '';
@@ -758,7 +763,7 @@ function usrdel(){
 	if($search_flag){
 		if(!$onlyimgdel) $PMS->useModuleMethods('PostOnDeletion', array($delposts, 'frontend')); // "PostOnDeletion" Hook Point
 		$files = $onlyimgdel ? $PIO->removeAttachments($delposts) : $PIO->removePosts($delposts);
-		$FileIO->updateStorageSize(-$FileIO->deleteImage($files)); // 更新容量快取
+		$FileIO->updateStorageSize(-$FileIO->deleteImage($board, $files)); // 更新容量快取
 		deleteCache($delposts);
 		$PIO->dbCommit();
 	}else error(_T('del_wrongpwornotfound'));
@@ -774,6 +779,7 @@ function usrdel(){
 /* 管理員密碼認證 */
 function valid(){
 	$PMS = PMCLibrary::getPMSInstance();
+	$board = Helper\current_board();
 
 	$pass = isset($_POST['pass']) ? $_POST['pass'] : ''; // 管理者密碼
 	$haveperm = false;
@@ -786,7 +792,7 @@ function valid(){
 	}
 	$dat = '';
 	head($dat);
-	$links = '[<a href="'.PHP_SELF2.'?'.time().'">'._T('return').'</a>] [<a href="'.PHP_SELF.'?mode=remake">'._T('admin_remake').'</a>] [<a href="'.PHP_SELF.'?page_num=0">'._T('admin_frontendmanage').'</a>]';
+	$links = '[<a href="'.PHP_SELF2.'?'.time().'">'._T('return').'</a>] [<a href="'. Helper\anchor($board) .'/?mode=remake">'._T('admin_remake').'</a>] [<a href="'. Helper\anchor($board).'/?page_num=0">'._T('admin_frontendmanage').'</a>]';
 	$PMS->useModuleMethods('LinksAboveBar', array(&$links,'admin',$isCheck)); // LinksAboveBar hook point
 	$dat .= '<div id="banner">'.$links.'<div class="bar_admin">'._T('admin_top').'</div>
 </div>
@@ -829,6 +835,7 @@ function admindel(){
 	$FileIO = PMCLibrary::getFileIOInstance();
 	$PMS = PMCLibrary::getPMSInstance();
 
+	$board = $_POST['board'];
 	$pass = isset($_POST['pass']) ? $_POST['pass'] : ''; // 管理者密碼
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 0; // 切換頁數
 	$onlyimgdel = isset($_POST['onlyimgdel']) ? $_POST['onlyimgdel'] : ''; // 只刪圖
@@ -847,7 +854,7 @@ function admindel(){
 		$delno = array_merge($delno, $_POST['clist']);
 		if($onlyimgdel != 'on') $PMS->useModuleMethods('PostOnDeletion', array($delno, 'backend')); // "PostOnDeletion" Hook Point
 		$files = ($onlyimgdel != 'on') ? $PIO->removePosts($delno) : $PIO->removeAttachments($delno);
-		$FileIO->updateStorageSize(-$FileIO->deleteImage($files));
+		$FileIO->updateStorageSize(-$FileIO->deleteImage($board, $files));
 		deleteCache($delno);
 		$is_modified = true;
 	}
@@ -902,7 +909,7 @@ function admindel(){
 
 		// 從記錄抽出附加圖檔使用量並生成連結
 		if($ext && $FileIO->imageExists($tim.$ext)){
-			$clip = '<a href="'.$FileIO->getImageURL($tim.$ext).'" target="_blank">'.$tim.$ext.'</a>';
+			$clip = '<a href="'.$FileIO->getImageURL($board, $tim.$ext).'" target="_blank">'.$tim.$ext.'</a>';
 			$size = $FileIO->getImageFilesize($tim.$ext);
 			$thumbName = $FileIO->resolveThumbName($tim);
 			if($thumbName != false) $size += $FileIO->getImageFilesize($thumbName);
@@ -1153,6 +1160,7 @@ function showstatus(){
 
 /*-----------程式各項功能主要判斷-------------*/
 $mode = isset($_GET['mode']) ? $_GET['mode'] : (isset($_POST['mode']) ? $_POST['mode'] : ''); // 目前執行模式 (GET, POST)
+$board = Helper\current_board();
 
 switch($mode){
 	case 'regist':
@@ -1198,22 +1206,24 @@ switch($mode){
 	case 'usrdel':
 		usrdel();
 	case 'remake':
-		updatelog();
+		updatelog($board);
 		header('HTTP/1.1 302 Moved Temporarily');
 		header('Location: '.fullURL().PHP_SELF2.'?'.time());
 		break;
 	default:
 		header('Content-Type: text/html; charset=utf-8');
 
-		$res = isset($_GET['res']) ? $_GET['res'] : 0; // 欲回應編號
+		$res = Yonkoma\Helper\current_thread();
+		if (!$res) $res = 0;
 		if($res){ // 回應模式輸出
 			$page = isset($_GET['page_num']) ? $_GET['page_num'] : 'RE_PAGE_MAX';
 			if(!($page=='all' || $page=='RE_PAGE_MAX')) $page = intval($_GET['page_num']);
-			updatelog($res, $page); // 實行分頁
+			updatelog($board, $res, $page); // 實行分頁
 		}elseif(isset($_GET['page_num']) && intval($_GET['page_num']) > -1){ // PHP動態輸出一頁
-			updatelog(0, intval($_GET['page_num']));
+			updatelog($board, 0, intval($_GET['page_num']));
 		}else{ // 導至靜態庫存頁
-			if(!is_file(PHP_SELF2)) updatelog();
+			// TODO!
+			if(!is_file(PHP_SELF2)) updatelog($board);
 			header('HTTP/1.1 302 Moved Temporarily');
 			header('Location: '.fullURL().PHP_SELF2.'?'.time());
 		}

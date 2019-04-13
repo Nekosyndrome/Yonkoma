@@ -46,19 +46,31 @@ define("FILEIO_PARAMETER", ''); // FileIO參數 (本機端儲存)
 //define("FILEIO_PARAMETER", serialize(array('00000000000000000000000000000000'))); // FileIO參數 (ImageShack)
 //define("FILEIO_PARAMETER", serialize(array('http://www.example.com/~demo/satellite.cgi', true, '12345678', 'http://www.example.com/~demo/src/', true))); // FileIO參數 (Satellite)
 
-// PIO資料來源設定
+// 資料庫設定
 $config['db'] = array(
-    'type' => 'sqlite3',
+    'type' => 'sqlite', // 資料庫 engine
     //'user' => '',
     //'password' => '',
     //'server' => '',
-    'database' => 'yonkoma.db3',
+    'db_folder' => 'database', // 放資料庫的資料夾
+    'database' => 'yonkoma.db3', // 主資料庫
 );
-//define("CONNECTION_STRING", 'log://img.log:tree.log/'); // PIO 連線字串 (Log)
-//define("CONNECTION_STRING", 'mysql://pixmicat:pass@localhost/test/imglog/'); // PIO 連線字串 (MySQL)
-define("CONNECTION_STRING", 'sqlite3://'.STORAGE_PATH.'pixmicat.db3/imglog/'); // PIO 連線字串 (PDO SQLite)
-//define("CONNECTION_STRING", 'sqlite://'.STORAGE_PATH.'pixmicat.db/imglog/'); // PIO 連線字串 (SQLite 2)
-//define("CONNECTION_STRING", 'pgsql://pixmicat:1234@localhost/pixmicat_use/imglog/'); // PIO 連線字串 (PostgreSQL)
+$config['path'] = array(
+	'root' => dirname(__FILE__).DIRECTORY_SEPARATOR,
+);
+$config['url'] = array(
+    'base' => '',
+    'skip_segments' => 0, // 在 domain 底下幾層資料夾，例如 php 位置如果在 http://localhost/test/ 底下則 skip 要設為 1
+    'script' => 'pixmicat.php',
+);
+$config['security'] = array(
+    'idseed' => 'id種', // 生成ID之隨機種子
+);
+$config['boards'] = array(
+	'00' => array(
+		'title' => '綜合'
+	),
+);
 
 /*---- Part 2：板面各項細部功能設定 ----*/
 define("IMG_DIR", STORAGE_PATH . 'src/'); // 圖片存放目錄

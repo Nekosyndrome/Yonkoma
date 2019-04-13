@@ -36,8 +36,13 @@ server {
     # include cloudflare;
 
     # forbidden files
-    location ~ (\.log|\.db3|\.dat) {
-        return 404;
+    location ~ (\.log|\.db3|\.dat)$ {
+        return 403;
+    }
+
+    # static files
+    location ~ (\.htm|\.html|\.json|\.js|\.css|\.jpg|\.jpeg|\.png|\.webm|\.mp4|\.gif)$ {
+        try_files $uri $uri/ /boards/$uri /boards/$uri/ =404;
     }
 
     # return custom css by cookie
@@ -58,7 +63,19 @@ server {
         rewrite ^ $file break;
     }
 
-    location / {
+    location ~ / {
+        try_files $uri $uri/ @router;
+        #if (-e $request_filename) {
+        #    break;
+        #}
+        #if (!-e $request_filename) {
+        #    rewrite ^/(.*)$ /pixmicat.php/$1 last;
+        #}
         include php;
     }
+
+    location @router {
+        rewrite ^/(.*)$ /pixmicat.php/$1;
+    }
+
 }

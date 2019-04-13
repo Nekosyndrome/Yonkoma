@@ -1,5 +1,6 @@
 <?php
 use Yonkoma\Singleton;
+use Yonkoma\Helper;
 class mod_ajax extends ModuleHelper{
 
 	protected $MAX_POSTS = 114514;
@@ -32,13 +33,15 @@ class mod_ajax extends ModuleHelper{
 			'error' => 1,
 			'msg' => $err
 		);
-		echo json_encode($out);
+		header('Content-Type: application/json');
+		echo json_encode($out, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 		exit(0);
 	}
 
 	function output_json(&$ar)
 	{
-		echo json_encode($ar);
+		header('Content-Type: application/json');
+		echo json_encode($ar, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 		exit(0);
 	}
 
@@ -144,6 +147,7 @@ class mod_ajax extends ModuleHelper{
 		$PMS = PMCLibrary::getPMSInstance();
 		$twig = Singleton::getTwig('page.twig');
 		$tree = array_flip($tree);
+		$board = Helper\current_board();
 		extract($post);
 
 		// 設定欄位值
@@ -168,14 +172,14 @@ class mod_ajax extends ModuleHelper{
 		}
 
 		// 設定附加圖檔顯示
-		if($ext && $FileIO->imageExists($tim.$ext)){
-			$imageURL = $FileIO->getImageURL($tim.$ext); // image URL
+		if($ext && $FileIO->imageExists($board, $tim.$ext)){
+			$imageURL = $FileIO->getImageURL($board, $tim.$ext); // image URL
 			$thumbName = $FileIO->resolveThumbName($tim); // thumb Name
 
 			$imgsrc = '<a class="file-thumb" href="'.$imageURL.'" target="_blank" rel="nofollow"><img src="nothumb.gif" class="img" alt="'.$imgsize.'" title="'.$imgsize.'" /></a>'; // 預設顯示圖樣式 (無預覽圖時)
 			if($tw && $th){
 				if($thumbName != false){ // 有預覽圖
-					$thumbURL = $FileIO->getImageURL($thumbName); // thumb URL
+					$thumbURL = $FileIO->getImageURL($board, $thumbName); // thumb URL
 					$img_thumb = '<small>'._T('img_sample').'</small>';
 					$imgsrc = '<a class="file-thumb" href="'.$imageURL.'" target="_blank" rel="nofollow"><img src="'.$thumbURL.'" style="width: '.$tw.'px; height: '.$th.'px;" class="img" alt="'.$imgsize.'" title="'.$imgsize.'" /></a>';
 				}elseif($ext=='.swf') $imgsrc = ''; // swf檔案不需預覽圖

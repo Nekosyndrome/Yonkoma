@@ -3,7 +3,10 @@
     "autoload" : {
         "psr-4": {
             "Yonkoma\\": "lib/"
-        }
+        },
+        "files": [
+            "lib/helper.php"
+        ]
     },
     "require" : {
         "php": ">=7.0.0",

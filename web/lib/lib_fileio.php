@@ -8,6 +8,9 @@
 /**
  * 抽象 FileIO，預先實作好本地圖檔相關方法。
  */
+
+use Yonkoma\Helper;
+
 abstract class AbstractFileIO implements IFileIO {
 
     /** @var ILogger */
@@ -44,10 +47,12 @@ abstract class AbstractFileIO implements IFileIO {
         return STORAGE_PATH . 'sizecache.dat';
     }
 
-    protected function getImageLocalURL($imgname) {
-        return $this->absoluteUrl .
-                (strpos($imgname, 's.') !== false ? basename(THUMB_DIR) : basename(IMG_DIR)).'/'.
-                $imgname;
+    protected function getImageLocalURL($board, $imgname) {
+        return Helper\anchor(
+            $board,
+            (strpos($imgname, 's.') !== false ? basename(THUMB_DIR) : basename(IMG_DIR)),
+            $imgname
+        );
     }
 
     protected function remoteImageExists($img) {
@@ -129,12 +134,12 @@ abstract class AbstractIfsFileIO extends AbstractFileIO {
         $this->IFS->saveIndex();
     }
 
-    public function imageExists($imgname) {
-        return $this->IFS->beRecord($imgname);
+    public function imageExists($board, $imgname) {
+        return $this->IFS->beRecord($board, $imgname);
     }
 
-    public function getImageFilesize($imgname) {
-        $rc = $this->IFS->getRecord($imgname);
+    public function getImageFilesize($board, $imgname) {
+        $rc = $this->IFS->getRecord($board, $imgname);
         if (!is_null($rc)) {
             return $rc['imgSize'];
         }

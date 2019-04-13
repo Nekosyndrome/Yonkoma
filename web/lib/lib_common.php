@@ -10,6 +10,7 @@
  */
  
  use Yonkoma\Singleton;
+ use Yonkoma\Helper;
 
 //TODO: fix this shit
 function transformTemplateArray($input)
@@ -29,6 +30,7 @@ function transformTemplateArray($input)
 function head(&$dat,$resno=0){
 	$PMS = PMCLibrary::getPMSInstance();
 	$twig = Singleton::getTwig('page.twig');
+	$board = Helper\current_board();
 
 	$pte_vals = array('{$TITLE}'=>TITLE,'{$RESTO}'=>$resno?$resno:'');
 	$dat .= $twig->renderBlock('HEADER', transformTemplateArray($pte_vals));
@@ -40,18 +42,18 @@ function head(&$dat,$resno=0){
 	$dat .= $twig->renderBlock('JSHEADER', transformTemplateArray($pte_vals));
 	$dat .= '</head>';
 	$pte_vals += array('{$TOP_LINKS}' => TOP_LINKS,
-		'{$HOME}' => '[<a href="'.HOME.'" target="_top">'._T('head_home').'</a>]',
-		'{$STATUS}' => '[<a href="'.PHP_SELF.'?mode=status">'._T('head_info').'</a>]',
-		'{$ADMIN}' => '[<a href="'.PHP_SELF.'?mode=admin">'._T('head_admin').'</a>]',
-		'{$REFRESH}' => '[<a href="'.PHP_SELF2.'?">'._T('head_refresh').'</a>]',
-		'{$SEARCH}' => (USE_SEARCH) ? '[<a href="'.PHP_SELF.'?mode=search">'._T('head_search').'</a>]' : '',
+		'{$HOME}' => '[<a href="'. Helper\anchor($board).'" target="_top">'._T('head_home').'</a>]',
+		'{$STATUS}' => '[<a href="'. Helper\anchor($board).'/?mode=status">'._T('head_info').'</a>]',
+		'{$ADMIN}' => '[<a href="'. Helper\anchor($board).'/?mode=admin">'._T('head_admin').'</a>]',
+		'{$REFRESH}' => '[<a href="'. Helper\anchor($board, PHP_SELF2).'?">'._T('head_refresh').'</a>]',
+		'{$SEARCH}' => (USE_SEARCH) ? '[<a href="'. Helper\anchor($board).'/?mode=search">'._T('head_search').'</a>]' : '',
 		'{$HOOKLINKS}' => '');
 	$PMS->useModuleMethods('Toplink', array(&$pte_vals['{$HOOKLINKS}'],$resno)); // "Toplink" Hook Point
 	$dat .= $twig->renderBlock('BODYHEAD', transformTemplateArray($pte_vals));
 }
 
 /* 發表用表單輸出 */
-function form(&$dat, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail='', $sub='', $com='', $cat='', $mode='regist'){
+function form(&$dat, $board, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail='', $sub='', $com='', $cat='', $mode='regist'){
 	global $ADDITION_INFO;
 	$PMS = PMCLibrary::getPMSInstance();
 	$twig = Singleton::getTwig('page.twig');
@@ -66,10 +68,10 @@ function form(&$dat, $resno, $iscollapse=true, $retURL=PHP_SELF, $name='', $mail
 	if(USE_FLOATFORM && !$resno && $iscollapse) $pte_vals['{$FORMTOP}'] .= "\n".'[<span id="show" class="hide">'._T('form_showpostform').'</span><span id="hide" class="show">'._T('form_hidepostform').'</span>]';
 	$pte_vals += array('{$MAX_FILE_SIZE}' => MAX_KB * 1024,
 		'{$RESTO}' => $resno ? '<input type="hidden" name="resto" value="'.$resno.'" />' : '',
+		'{$BOARD}' => $board,
 		'{$FORM_NAME_TEXT}' => _T('form_name'),
 		'{$FORM_NAME_FIELD}' => '<input class="hide" value="DO NOT FIX THIS" type="text" name="sub" /><input class="hide" type="text" name="name" value="spammer" /><input maxlength="'.INPUT_MAX.'" type="text" name="'.FT_NAME.'" id="fname" size="28" value="'.$name.'" />',
 		'{$FORM_EMAIL_TEXT}' => _T('form_email'),
-//		'{$FORM_EMAIL_FIELD}' => '<input maxlength="'.INPUT_MAX.'" type="text" name="'.FT_EMAIL.'" id="femail" size="28" value="'.$mail.'" /><input type="text" class="hide" name="email" value="foo@foo.bar" />',
 		'{$FORM_EMAIL_FIELD}' => '<input type="checkbox" name="'.FT_EMAIL.'" id="femail" value="sage" /><input type="text" class="hide" name="email" value="foo@foo.bar" />',
 		'{$FORM_TOPIC_TEXT}' => _T('form_topic'),
 		'{$FORM_TOPIC_FIELD}' => '<input maxlength="'.INPUT_MAX.'"  type="text" name="'.FT_SUBJECT.'" id="fsub" size="28" value="'.$sub.'" />',
@@ -142,9 +144,11 @@ function fullURL(){
 /* 輸出錯誤畫面 */
 function error($mes, $dest=''){
 	$twig = Singleton::getTwig('page.twig');
+	$board = Helper\current_board();
+	$link = Helper\anchor($board, PHP_SELF2);
 
 	if(is_file($dest)) unlink($dest);
-	$pte_vals = array('{$SELF2}'=>PHP_SELF2.'?'.time(), '{$MESG}'=>$mes, '{$RETURN_TEXT}'=>_T('return'), '{$BACK_TEXT}'=>_T('error_back'));
+	$pte_vals = array('{$SELF2}'=>$link.'?'.time(), '{$MESG}'=>$mes, '{$RETURN_TEXT}'=>_T('return'), '{$BACK_TEXT}'=>_T('error_back'));
 	$dat = '';
 	head($dat);
 	$dat .= $twig->renderBlock('ERROR', transformTemplateArray($pte_vals));

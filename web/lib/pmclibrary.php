@@ -13,6 +13,7 @@ require ROOTPATH.'lib/interfaces.php';
 require ROOTPATH.'lib/lib_simplelogger.php';
 require ROOTPATH.'lib/lib_loggerinterceptor.php';
 
+use Yonkoma\Helper;
 class PMCLibrary {
 	/**
 	 * 取得 PIO 函式庫物件
@@ -22,16 +23,19 @@ class PMCLibrary {
 	public static function getPIOInstance() {
 		global $PIOEnv;
 		global $config;
-		static $instPIO = null;
-		if ($instPIO == null) {
-			require ROOTPATH.'lib/lib_pio.php';
+		static $instPIO = [];
+		$board = Helper\current_board();
+
+		$index = $board ? $board : '__share_db';
+		if (!isset($instPIO[$index])) {
+			require_once ROOTPATH.'lib/lib_pio.php';
 			$pioExactClass = '\\Yonkoma\\Database\\Implementation\\'. ucfirst($config['db']['type']);
-			$instPIO = new LoggerInjector(
-				new $pioExactClass($config['db'], $PIOEnv),
+			$instPIO[$index] = new LoggerInjector(
+				new $pioExactClass($config['db'], $board, $PIOEnv),
 				new LoggerInterceptor(PMCLibrary::getLoggerInstance($pioExactClass))
 			);
 		}
-		return $instPIO;
+		return $instPIO[$index];
 	}
 
 	/**

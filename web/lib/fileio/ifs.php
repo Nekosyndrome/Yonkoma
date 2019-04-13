@@ -128,7 +128,7 @@ class IndexFS{
 	}
 
 	/* 新增一筆索引 */
-	function addRecord($id, $imgSize, $imgURL){
+	function addRecord($board, $id, $imgSize, $imgURL){
 		switch($this->backend){
 			case 'pdo_sqlite':
 				$sth = $this->index->prepare('INSERT INTO IndexFS (imgName, imgSize, imgURL) VALUES (?, ?, ?)');
