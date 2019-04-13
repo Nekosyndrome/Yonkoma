@@ -1,4 +1,4 @@
-location ~ \.php$ {
+location ~ \.php($|/) {
     limit_conn           conlimit_php        3;
     limit_conn_log_level warn;
     limit_conn_status    429;
