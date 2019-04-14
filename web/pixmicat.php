@@ -14,7 +14,7 @@ use Yonkoma\Helper;
 /* 更新記錄檔檔案／輸出討論串 */
 function updatelog($board,$resno=0,$page_num=-1,$single_page=false){
 	global $LIMIT_SENSOR;
-	$PIO = PMCLibrary::getPIOInstance();
+	$PIO = PMCLibrary::getPIOInstance($board);
 	$FileIO = PMCLibrary::getFileIOInstance();
 	$PMS = PMCLibrary::getPMSInstance();
 	$twig = Singleton::getTwig('page.twig');
@@ -269,14 +269,6 @@ function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_ki
 		// 設定回應 / 引用連結
 		$QUOTEBTN = 'No.'. $no;
 		if(!$resno && !$i) $REPLYBTN = '[<a href="'. Yonkoma\Helper\path_join('/', $config['url']['base'], $board, $no).'">'._T('reply_btn').'</a>]'; // 首篇
-		/*
-		if($resno){ // 回應模式
-			if($showquotelink) $QUOTEBTN = '<a href="javascript:quote('.$no.');" class="qlink">No.'.$no.'</a>';
-			else $QUOTEBTN = '<a href="'.PHP_SELF.'?res='.$tree.'&amp;page_num=all#r'.$no.'" class="qlink">No.'.$no.'</a>';
-		}else{
-			if(!$i)	$REPLYBTN = '[<a href="'.PHP_SELF.'?res='.$no.'">'._T('reply_btn').'</a>]'; // 首篇
-			$QUOTEBTN = '<a href="'.PHP_SELF.'?res='.$tree[0].'#q'.$no.'" class="qlink">No.'.$no.'</a>';
-		}*/
 		if($adminMode){ // 前端管理模式
 			$modFunc = '';
 			$PMS->useModuleMethods('AdminList', array(&$modFunc, $posts[$i], $resto)); // "AdminList" Hook Point
@@ -313,7 +305,8 @@ function arrangeThread($tree, $tree_cut, $posts, $hiddenReply, $resno=0, $arr_ki
 /* 寫入記錄檔 */
 function regist(){
 	global $BAD_STRING, $BAD_FILEMD5, $BAD_IPADDR, $LIMIT_SENSOR, $THUMB_SETTING;
-	$PIO = PMCLibrary::getPIOInstance();
+	$board = isset($_POST['board']) ? $_POST['board'] : '';
+	$PIO = PMCLibrary::getPIOInstance($board);
 	$FileIO = PMCLibrary::getFileIOInstance();
 	$PMS = PMCLibrary::getPMSInstance();
 
@@ -322,7 +315,7 @@ function regist(){
 
 	if($_SERVER['REQUEST_METHOD'] != 'POST') error(_T('regist_notpost')); // 非正規POST方式
 	// 欄位陷阱
-	$board = isset($_POST['board']) ? $_POST['board'] : '';
+	
 	$FTname = isset($_POST['name']) ? $_POST['name'] : '';
 	$FTemail = isset($_POST['email']) ? $_POST['email'] : '';
 	$FTsub = isset($_POST['sub']) ? $_POST['sub'] : '';
@@ -592,8 +585,8 @@ function regist(){
 	setcookie('pwdc', $pwd, time()+7*24*3600);
 	setcookie('emailc', $email, time()+7*24*3600);
 	if($dest && is_file($dest)){
-		$destFile = IMG_DIR.$tim.$ext; // 圖檔儲存位置
-		$thumbFile = THUMB_DIR.$tim.'s.'.$THUMB_SETTING['Format']; // 預覽圖儲存位置
+		$destFile = "boards/$board/".IMG_DIR.$tim.$ext; // 圖檔儲存位置
+		$thumbFile = "boards/$board/".THUMB_DIR.$tim.'s.'.$THUMB_SETTING['Format']; // 預覽圖儲存位置
 		if(USE_THUMB !== 0){ // 生成預覽圖
 			if($is_webm) {
 				$video = new webm($dest);

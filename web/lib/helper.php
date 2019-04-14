@@ -33,6 +33,9 @@ function uri_segment(int $index = 0)
 function current_board()
 {
     global $config;
+    if (isset($_POST['board'])) {
+        return $_POST['board'];
+    }
     $board = uri_segment(1);
     if ($board===null || isset($config['boards'][$board])) {
         return $board;

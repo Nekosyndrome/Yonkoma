@@ -20,11 +20,13 @@ class PMCLibrary {
 	 *
 	 * @return IPIO PIO 函式庫物件
 	 */
-	public static function getPIOInstance() {
+	public static function getPIOInstance($board = null) {
 		global $PIOEnv;
 		global $config;
 		static $instPIO = [];
-		$board = Helper\current_board();
+		if (!$board) {
+			$board = Helper\current_board();
+		}
 
 		$index = $board ? $board : '__share_db';
 		if (!isset($instPIO[$index])) {
