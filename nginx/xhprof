@@ -1,0 +1,9 @@
+server {
+    listen 8000;
+    root /var/www/xhprof-html/;
+    index index.htm index.html index.php;
+
+    location ~ / {
+        include php;
+    }
+}
