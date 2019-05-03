@@ -1,34 +1,35 @@
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/yonkoma/Lobby)
-
 # Yonkoma
 
-目前用在 elsa.komica.org、komicolle.dreamhosters.com、emc4.dreamhosters.com 三個網域上的pixmicat版本。原本舊的專案在 [這裡](https://github.com/komica02/Yonkoma.js)。
+## 介紹
 
-## How to contribute
+Yonkoma 是一款 [futaba](https://www.2chan.net/script/) 樣式匿名討論版。Yonkoma 的名稱來源是最開始在 Komica 實驗此程式的四格版。
 
-### Bug回報/功能建議
+請注意這個專案是個人專案，與 Komica 並沒有程式以外關聯，對管理相關的問題一概無法回答。
 
-- 不熟github介面的，可以到 [CS](http://komicolle.dreamhosters.com/cs/) 版開串或找以前的串回覆。或者 mail 給下面的 contactors
-- 開發人員也可以連絡管理員、開 issues 或直接修改 code 
+## 開發方向與大綱
 
-### Code修改
+主要的修改方向有下列幾點:
 
-- git clone 完以後請先 checkout 到 `develop` branch
-- commit string 請參照目前有的格式
-- 做 pull request 之前請在本機端確認一次有沒有對到新的版本，審核會盡量用 rebase 取代 merge
+- 程式效率: 基本目標是能在 1G ~ 2G 的 VPS 上 host 20 萬 PV 以上的討論版
+- 管理效率: 多版的架構與管理介面與實作安全性的功能
+- mobile-friendly 與 SEO: 我們會打算維護 server-side 與 front-end rendering 兩種版本
+- 前後端分離與 dev environment 的開發
+
+## 參與開發
+
+**目前專案架構變更很大，建議先和作者討論開發方向再決定**
+
+- 專案為 UNLICENSE 放棄著作權，請先確認是否有辦法接受在此前提下開發
+- 請在 `develop` branch 上開發
+- 請 commit unix-style 的格式(換行字元為\n)
+- 後端開發:
+  - coding style 請參考 [PSR-2](https://www.php-fig.org/psr/psr-2/)
+  - 建議先從 docker 的測試環境開始開發
+- 前端開發:
+  - 待補
 
 ## 一些資料
 
 - [API格式](https://github.com/Nekosyndrome/yonkoma/wiki/Api)
 - 資料表格式 - pending
 
-## gitter聊天室
-
-https://gitter.im/yonkoma/Lobby
-
-## Contact
-
-管理上或功能上的建議可以聯絡A02，程式、pull request、或伺服器更新問題請聯絡Nyanya。
-
-A02: a02@komica.org
-Nyanya: prggeniki@gmail.com
